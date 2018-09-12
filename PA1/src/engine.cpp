@@ -63,7 +63,10 @@ void Engine::Run()
     while(SDL_PollEvent(&m_event) != 0)
     {
       Keyboard();
+<<<<<<< HEAD
       //Mouse();
+=======
+>>>>>>> 01bf30800888fb3fe3fa89f7ed9be668ae315de1
     }
 
     // Update and render the graphics
@@ -84,15 +87,19 @@ void Engine::Keyboard()
   else if (m_event.type == SDL_KEYDOWN)
   {
     // handle key down events here
+<<<<<<< HEAD
     if (m_event.key.keysym.sym == SDLK_a)
     {
       m_running = false;
     }
 
+=======
+>>>>>>> 01bf30800888fb3fe3fa89f7ed9be668ae315de1
     if (m_event.key.keysym.sym == SDLK_ESCAPE)
     {
       m_running = false;
     }
+<<<<<<< HEAD
 
 
   }
@@ -105,6 +112,11 @@ void Engine::Mouse()
 }
 */
 
+=======
+  }
+}
+
+>>>>>>> 01bf30800888fb3fe3fa89f7ed9be668ae315de1
 unsigned int Engine::getDT()
 {
   long long TimeNowMillis = GetCurrentTimeMillis();

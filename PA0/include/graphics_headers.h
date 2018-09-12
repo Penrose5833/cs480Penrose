@@ -1,6 +1,9 @@
 #ifndef GRAPHICS_HEADERS_H
 #define GRAPHICS_HEADERS_H
+<<<<<<< HEAD
 #define GLM_ENABLE_EXPERIMENTAL
+=======
+>>>>>>> 01bf30800888fb3fe3fa89f7ed9be668ae315de1
 
 #include <iostream>
 
