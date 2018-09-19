@@ -15,6 +15,10 @@ This is a cube that rotates in place on the screen. To run this project ```cd PA
 <<<<<<< HEAD
 ## PA2: Interaction
 The cube will change orbit and rotation direction based upon keyboard and mouse input. To run thsi project ```cd PA2``` then follow the instructions in the README.md.
+
+## PA3: Moons
+A moon will orbit around the planet despite the planet's change of direction. To run this project ```cd PA3 ``` then follow the instruction in the README.md.
+
 =======
 
 >>>>>>> 01bf30800888fb3fe3fa89f7ed9be668ae315de1
