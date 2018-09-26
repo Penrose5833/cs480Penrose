@@ -1,4 +1,4 @@
-# PA3: Moons
+# PA4: Object Loading
 # Building, Running, and Using the Program
 
 
@@ -23,9 +23,9 @@ make
 ```
 ## Using
 
-The .obj filess are placed in the objects folder inside the PA4 directory. 
+The .obj filess are placed in the objects folder inside the PA4 directory. I removed the .obj ignore to upload the board I made in blender. That is the current file path link.
 
-```LINE 51 ```of graphics.cpp has a function that takes in the .obj file path. Obviously this can be any filepath, but if the object is placed in the "objects" folder as mentioned above, then all that needs to be changed is the file name. The file current filepath is for box.obj which contains the box made in blender.
+```LINE 51 ```of graphics.cpp has a function that takes in the .obj file path. I overloaded this function, so no file path will produce the cubes from the previous projects.
 
 ```
 The computers in dr. harris' lab are much faster, but when loading the dragon on my computer it takes about 10 seconds before anything happens.

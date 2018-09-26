@@ -19,6 +19,8 @@ The cube will change orbit and rotation direction based upon keyboard and mouse 
 ## PA3: Moons
 A moon will orbit around the planet despite the planet's change of direction. To run this project ```cd PA3 ``` then follow the instruction in the README.md.
 
+## PA4: Object Loading
+This will take in a .obj file and load it. To run this project ```cd PA4``` and then follow the instructions in the README.md.
 =======
 
 >>>>>>> 01bf30800888fb3fe3fa89f7ed9be668ae315de1
