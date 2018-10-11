@@ -21,8 +21,8 @@ A moon will orbit around the planet despite the planet's change of direction. To
 ## PA4: Object Loading
 This will take in a .obj file and load it. To run this project ```cd PA4``` and then follow the instructions in the README.md.
 
-##PA5: Assimp Model Loading
+## PA5: Assimp Model Loading
 This project will load models using assimp. To run this project ```cd PA5``` and then follow the instructions in the README.md.
 
-##PA6: Assimp Texture Loading
+## PA6: Assimp Texture Loading
 This project will load textures using assimp. To run this project ```cd PA6``` and then follow the instructions in the README.md.
