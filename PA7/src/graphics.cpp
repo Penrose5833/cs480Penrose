@@ -1,4 +1,6 @@
 #include "graphics.h"
+#include <fstream>
+#include <sstream>
 
 Graphics::Graphics()
 {
@@ -15,6 +17,8 @@ Graphics::~Graphics()
 
 bool Graphics::Initialize(int width, int height)
 {
+  speedScale = 1.0;
+  scalePower = 1/2.;
   // Used for the linux OS
   #if !defined(__APPLE__) && !defined(MACOSX)
     // cout << glewGetString(GLEW_VERSION) << endl;
@@ -119,8 +123,6 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-
-
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -131,50 +133,73 @@ bool Graphics::Initialize(int width, int height)
 bool Graphics::LoadObjects()
 {
   string filePath;
-	numObjects = 3;
-	for(int i = 0; i < numObjects; i++)
-	{
-    cout << "Please specify the file name" << endl;
-    cin >> filePath;
-    filePath = "../assets/" + filePath + ".obj";
-    //filePath = "../assets/textured.obj";
-		objects.push_back(new Object(filePath.c_str()));
-	}
+  string tmp;
+  stringstream buffer;
+  int idx = 0;
 
-  //Sun
-  objects[0]->setOrbitRadius(0.0f);
-  objects[0]->setSpinSpeed(0.5f);
-  objects[0]->setOrbitSpeed(0.0f);
-  objects[0]->setSize(1.0f);
+  fstream fin;
+  fin.open("../SolarSystem.txt", std::fstream::in);
+  if(!fin)
+  {
+    cout << "Failed to open config file" << endl;
+    return false;
+  }
+  buffer << fin.rdbuf();
+  fin.close();
 
-  //Earth
-  objects[1]->setOrbitRadius(8.0f);
-  objects[1]->setSpinSpeed(1.0f);
-  objects[1]->setOrbitSpeed(0.5f);
-  objects[1]->setSize(0.25f);
-  objects[1]->setParent(objects[0]);
+  while(!buffer.eof())
+  {
 
-  //Earths Moon
-  objects[2]->setOrbitRadius(2.5f);
-  objects[2]->setSpinSpeed(3.0f);
-  objects[2]->setOrbitSpeed(2.0f);
-  objects[2]->setSize(0.05f);
-  objects[2]->setParent(objects[1]);
+    buffer >> tmp;
+    if(buffer.eof())
+    {
+      //cout << tmp << endl;
+      break;
+    }
+    if(tmp == "#")
+    {
+      //cout << tmp << endl;
+      buffer.ignore(1000, '\n');
+    }
+    else
+    {
+      // cout << tmp << endl;
+      objects.push_back(new Object(("../assets/" + tmp + ".obj").c_str()));
+      buffer >> tmp;
+      objects[idx] -> setName(tmp.c_str());
+      cout << "object name is " << objects[idx] -> getName() << endl;
+      buffer >> tmp;
+      if(tmp == "NULL")
+      {
+        objects[idx]-> setParent(NULL);
+      }
+      else
+      {
+        objects[idx]-> setParent(getObjectPtr(tmp));
+      }
+      buffer >> tmp;
+      objects[idx] -> setSize(glm::pow(stof(tmp), scalePower));
+      buffer >> tmp;
+      objects[idx] -> setOrbitRadius(glm::pow(stof(tmp), scalePower));
+      buffer >> tmp;
+      if(stof(tmp) < 0)
+      {
+        // cout << "opposite direction" << endl;
+        objects[idx] -> reverseOrbit();
+      }
+      objects[idx] -> setOrbitSpeed(stof(tmp));
+      buffer >> tmp;
+      if(stof(tmp) < 0)
+      {
+        // cout << "opposite direction" << endl;
+        objects[idx] -> reverseSpin();
+      }
+      objects[idx] -> setSpinSpeed(stof(tmp));
+      idx++;
+    }
+  }
 
-	// // objects[0]->setOrbitRadius(0.0f);
-	// // objects[0]->setSpinSpeed(0.5f);
-	// // objects[0]->setOrbitSpeed(0.0f);
-	// // objects[0]->setSize(2.0f);
 
-	// // objects[1]->setOrbitRadius(8.0f);
-	// // objects[1]->setSpinSpeed(1.0f);
-	// // objects[1]->setOrbitSpeed(0.5f);
-	// // objects[1]->setSize(0.75f);
-
-	// // objects[2]->setOrbitRadius(2.5f);
-	// // objects[2]->setSpinSpeed(3.0f);
-	// // objects[2]->setOrbitSpeed(2.0f);
-	// // objects[2]->setSize(0.25f);
 
 	return true;
 }
@@ -182,21 +207,10 @@ bool Graphics::LoadObjects()
 void Graphics::Update(unsigned int dt)
 {
   // Update the object
-  // m_cube1->Update(dt, glm::mat4(1.0f));
-  // m_cube2->Update(dt, m_cube1 -> GetTranslation());
-	// for(int i = 0; i < objects.size(); i++)
-	// {
- //    objects[i]
-	// }
-
-	// objects[0]-> Update(dt, glm::mat4(1.0f));
-
-  for (int i = 0; i < numObjects; i++)
-  {
-   objects[i]->Update(dt); 
-  }
-	// objects[1]-> Update(dt, objects[0]->GetTranslation());
-	// objects[2]-> Update(dt, objects[1]->GetTranslation());
+	for(int i = 0; i < objects.size(); i++)
+	{
+    	objects[i] -> Update(dt, speedScale);
+	}
 }
 
 void Graphics::Render()
@@ -215,8 +229,8 @@ void Graphics::Render()
   // Render the object
   for(int i = 0; i < objects.size(); i++)
   {
-  	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(objects[i]->GetModel()));
-  	objects[i]->Render();
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(objects[i]->GetModel()));
+    objects[i]->Render();	
   }
 
   // Get any errors from OpenGL
@@ -260,27 +274,30 @@ std::string Graphics::ErrorString(GLenum error)
   }
 }
 
-void Graphics::reverseObjectSpin()
+void Graphics::translateCamera(SDL_Keycode key, unsigned int dt)
 {
-  objects[0]->reverseSpin();
+  m_camera->translate(key, dt);
 }
 
-void Graphics::reverseObjectOrbit()
+void Graphics::rotateCamera(int X, int Y, unsigned int dt)
 {
-  objects[0]->reverseOrbit();
+  m_camera->rotateCamera(X, Y, dt);
 }
 
-void Graphics::translateCamera(glm::vec3 direction)
+Object* Graphics::getObjectPtr(string objectName)
 {
-  m_camera->translateCamera(direction);
+  for(int i = 0; i < objects.size(); i++)
+  {
+    if(objects[i] -> getName() == objectName)
+    {
+      return objects[i];
+    }
+  }
+  return NULL;
 }
 
-void Graphics::rotateCamera(int X, int Y)
+void Graphics::changeSpeed(int direction)
 {
-  m_camera->rotateCamera(X, Y);
-}
-
-void Graphics::returnCameraToOrigin()
-{
-  m_camera-> returnToOrigin();
+  speedScale += 0.5 * direction;
+  cout << "speed: " << speedScale << "x" << endl;
 }

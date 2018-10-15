@@ -12,82 +12,19 @@
 #include "glm/gtx/string_cast.hpp"
 using namespace std;
 
-Object::Object()
-{  
-  // Vertices = {
-  //   {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}},
-  //   {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-  //   {{-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-  //   {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-  //   {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
-  //   {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 1.0f}},
-  //   {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 1.0f}},
-  //   {{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}}
-  // };
-
-  // Indices = {
-  //   2, 3, 4,
-  //   8, 7, 6,
-  //   1, 5, 6,
-  //   2, 6, 7,
-  //   7, 8, 4,
-  //   1, 4, 8,
-  //   1, 2, 4,
-  //   5, 8, 6,
-  //   2, 1, 6,
-  //   3, 2, 7,
-  //   3, 7, 4,
-  //   5, 1, 8
-  // };
-
-  // // The index works at a 0th index
-  // for(unsigned int i = 0; i < Indices.size(); i++)
-  // {
-  //   Indices[i] = Indices[i] - 1;
-  // }
-
-  // spinAngle = 0.0f;
-  // orbitAngle = 0.0f;
-  // spinDirection = 1;
-  // orbitDirection = 1;
-
-  // glGenBuffers(1, &VB);
-  // glBindBuffer(GL_ARRAY_BUFFER, VB);
-  // glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
-
-  // glGenBuffers(1, &IB);
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
-  // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
-
-  spinAngle = 0.0f;
-  orbitAngle = 0.0f;
-  spinDirection = 1;
-  orbitDirection = 1;
-  orbitRadius = 0;
-  spinSpeed = 1.0f;
-  orbitSpeed = 1.0f;
-  size = 1.0f;
-}
 
 Object::Object(const char* filePath)
 {  
-	loadObject(filePath);
-
-  // spinAngle = 0.0f;
-  // orbitAngle = 0.0f;
-  // spinDirection = 1;
-  // orbitDirection = 1;
-
- 
-
   spinAngle = 0.0f;
   orbitAngle = 0.0f;
-  spinDirection = 1;
-  orbitDirection = 1;
   orbitRadius = 0;
   spinSpeed = 1.0f;
   orbitSpeed = 1.0f;
   size = 1.0f;
+  parent = NULL;
+  name = "";
+
+  loadObject(filePath);
 }
 
 Object::~Object()
@@ -101,8 +38,6 @@ bool Object::loadObject(const char* path)//,
 				// vector<glm::vec2>& out_uvs, 
 				// vector<glm::vec3>& outNormals)
 {
-
-
   stringstream buffer;
   fstream fin;
   string tmpStr;
@@ -112,8 +47,6 @@ bool Object::loadObject(const char* path)//,
   srand(time(NULL));
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
-
-
 
   if(scene == NULL)
   {
@@ -182,8 +115,6 @@ bool Object::loadObject(const char* path)//,
     int width = tex->size().width();
     int height = tex->size().height();
 
-    parent = NULL;
-
     glGenTextures(1, &aTexture[meshIndex]);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, aTexture[meshIndex]);
@@ -199,43 +130,32 @@ bool Object::loadObject(const char* path)//,
 	return true;
 }
 
-void Object::Update(unsigned int dt)
+void Object::Update(unsigned int dt, float speedScale)
 {
-  // glm::mat4 rotation;
-  // glm::mat4 translation;
-  // glm::mat4 scale;
-
-  if(spinDirection > 0)
+  glm::mat4 parentTranslation;
+  if(spinSpeed != 0)
   {
-    spinAngle += spinSpeed * dt * M_PI/1000;
-  }
-  else
-  {
-    spinAngle -= spinSpeed * dt * M_PI/1000; 
+    // spinAngle += speedScale * spinDirection * dt * 2 * M_PI / (spinSpeed * 1000);
+    spinAngle += speedScale * dt * 2 * M_PI / (spinSpeed * 1000);
   }
 
-  if(orbitDirection > 0)
+  if(orbitSpeed != 0)
   {
-    orbitAngle +=  orbitSpeed * dt * M_PI/1000;
-  }
-  else
-  {
-    orbitAngle -= orbitSpeed * dt * M_PI/1000;
+    orbitAngle += speedScale * dt * 2 * M_PI / (orbitSpeed * 1000);
   }
 
-  if (parent == NULL)
+
+  if(parent == NULL)
   {
     parentTranslation = glm::mat4(1.0f);
   }
-
   else
   {
-    parentTranslation = parent->translationMat;
+    parentTranslation = parent -> GetTranslation();
   }
   
-  glm::vec3 translationVector(orbitRadius*glm::cos(orbitAngle), 0, orbitRadius*glm::sin(orbitAngle));
+  glm::vec3 translationVector(orbitRadius*glm::sin(orbitAngle), 0, orbitRadius*glm::cos(orbitAngle));
 
-  //model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0, 0.0, 0.0));
   rotationMat = glm::rotate(glm::mat4(1.0f), (spinAngle), glm::vec3(0.0, 1, 0.0));
   translationMat = glm::translate(parentTranslation, translationVector);
   scaleMat = glm::scale(glm::mat4(1.0f), glm::vec3(size));
@@ -255,6 +175,9 @@ glm::mat4 Object::GetTranslation()
 
 void Object::Render()
 {
+  //cout << "Name: " << name << endl;
+  //cout << "orbit:" << orbitRadius << endl;
+  //cout << "diameter: " << size << endl;
   for(int renderIndex = 0; renderIndex < VB.size(); renderIndex++)
   {  
     glEnableVertexAttribArray(0);
@@ -263,8 +186,6 @@ void Object::Render()
     glBindBuffer(GL_ARRAY_BUFFER, VB[renderIndex]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,uv));
-
-
 
     glActiveTexture( GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, aTexture[renderIndex]);
@@ -280,14 +201,12 @@ void Object::Render()
 
 void Object::reverseSpin()
 {
-  spinDirection = spinDirection * -1;
-  //spinDirection = spinDirection;
+  spinSpeed *= -1;
 }
 
 void Object::reverseOrbit()
 {
-  orbitDirection = orbitDirection * -1;
-  //orbitDirection = orbitDirection;
+  orbitSpeed *= -1;
 }
 
 void Object::setOrbitRadius(float radius)
@@ -310,7 +229,17 @@ void Object::setSize(float sizeScale)
   size = sizeScale;
 }
 
-void Object::setParent(Object* parentObj)
+void Object::setParent(Object* ptr)
 {
-  parent = parentObj;
+  parent = ptr;
+}
+
+void Object::setName(string x)
+{
+  name = x;
+}
+
+string Object::getName()
+{
+  return name;
 }

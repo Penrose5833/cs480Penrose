@@ -18,19 +18,21 @@ class Graphics
     bool Initialize(int width, int height);
     void Update(unsigned int dt);
     void Render();
-    void reverseObjectSpin();
-    void reverseObjectOrbit();
+    // void reverseObjectSpin();
+    // void reverseObjectOrbit();
     bool LoadObjects();
-    void translateCamera(glm::vec3);
-    void rotateCamera(int, int);
-    void returnCameraToOrigin();
+    void translateCamera(SDL_Keycode, unsigned int);
+    void rotateCamera(int, int, unsigned int);
+    Object* getObjectPtr(string);
+    void changeSpeed(int);
 
   private:
+    float scalePower;
+    float speedScale;
     std::string ErrorString(GLenum error);
 
     Camera *m_camera;
     Shader *m_shader;
-    int numObjects;
 
     GLint m_projectionMatrix;
     GLint m_viewMatrix;

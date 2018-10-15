@@ -64,7 +64,7 @@ void Engine::Run()
 	m_pause = false;
  	m_running = true;
 
- 	// SDL_SetRelativeMouseMode(SDL_TRUE);
+ 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	while(m_running)
 	{
@@ -74,7 +74,7 @@ void Engine::Run()
 		// Check the keyboard input
 		while(SDL_PollEvent(&m_event) != 0)
 		{
-		  Keyboard(mouseXPtr, mouseYPtr);
+		  Keyboard(mouseXPtr, mouseYPtr, m_DT);
 		}
 
 		// Update and render the graphics
@@ -90,7 +90,7 @@ void Engine::Run()
 	}
 }
 
-void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr)
+void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr, unsigned int dt)
 {
 	if(m_event.type == SDL_QUIT)
 	{
@@ -103,46 +103,31 @@ void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr)
 		{
 			m_running = false;
 		}
-		else if(m_event.key.keysym.sym == SDLK_UP)
-		{
-			//reverse spin on up key
-			// m_graphics->reverseObjectSpin();
-			m_graphics->translateCamera(glm::vec3(0.0, -0.5, 0.0));
-		}
-		else if(m_event.key.keysym.sym == SDLK_DOWN)
-		{
-			//reverse spin on up key
-			// m_graphics->reverseObjectSpin();
-			m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
-		}
 		else if(m_event.key.keysym.sym == SDLK_w)
 		{
-			//reverse orbit on down key
-			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(0.0, 0.0, -0.5));
+			m_graphics-> translateCamera(SDLK_w, dt);
 		}
 		else if(m_event.key.keysym.sym == SDLK_a)
 		{
-			//reverse orbit on down key
-			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(-0.5, 0.0, 0.0));
+			m_graphics-> translateCamera(SDLK_a, dt);
 		}
 		else if(m_event.key.keysym.sym == SDLK_s)
 		{
-			//reverse orbit on down key
-			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(0.0, 0.0, 0.5));
+			m_graphics-> translateCamera(SDLK_s, dt);
 		}
 		else if(m_event.key.keysym.sym == SDLK_d)
 		{
-			//reverse orbit on down key
-			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(0.5, 0.0, 0.0));
+			m_graphics-> translateCamera(SDLK_d, dt);
 		}
-		else if(m_event.key.keysym.sym == SDLK_r)
+		else if(m_event.key.keysym.sym == SDLK_UP)
 		{
-			m_graphics -> returnCameraToOrigin();
+			m_graphics->changeSpeed(1);
 		}
+		else if(m_event.key.keysym.sym == SDLK_DOWN)
+		{
+			m_graphics->changeSpeed(-1);
+		}
+
 	}
 	// else if (m_event.type == SDL_MOUSEBUTTONDOWN)
 	// {
@@ -155,7 +140,7 @@ void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr)
 		SDL_GetRelativeMouseState(mouseXPtr, mouseYPtr);
 		// cout << "newX: " << *mouseXPtr << " newY: " << *mouseYPtr << endl;
 
-		m_graphics -> rotateCamera(*mouseXPtr, *mouseYPtr);
+		m_graphics -> rotateCamera(*mouseXPtr, *mouseYPtr, dt);
 	}
 }
 
