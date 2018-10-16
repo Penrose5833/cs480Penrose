@@ -1,0 +1,12 @@
+# Solar system
+# obj	Name	Parent	planetsize	orbitradius	orbitperiod	rotationperiod
+Sun	Sun	NULL	109.17		0		0		0
+Earth	Mercury	Sun	383		.387		0.241		58.8
+Earth	Venus	Sun	.949		.723		0.615		-244.0
+Earth	Earth	Sun	1		1		1		1
+Earth	Mars	Sun	.532		1.52		1.88		1.03
+Earth	Jupiter	Sun	11.21		5.20		11.9		0.415
+Earth	Saturn	Sun	9.45		9.58		29.4		0.445
+Earth	Uranus	Sun	4.01		19.20		83.7		-.720
+Earth	Neptune	Sun	3.88		30.05		163.7		0.673
+Earth	Pluto	Sun	.186		39.48		247.9		6.41

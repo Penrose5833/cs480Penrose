@@ -128,6 +128,11 @@ void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr, unsigned int dt)
 			m_graphics->changeSpeed(-1);
 		}
 
+		else if(m_event.key.keysym.sym == SDLK_p)
+		{
+			m_graphics->renderPath(-1);
+		}
+
 	}
 	// else if (m_event.type == SDL_MOUSEBUTTONDOWN)
 	// {

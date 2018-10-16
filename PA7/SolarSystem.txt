@@ -1,15 +1,30 @@
 # Solar system
 # obj		Name		Parent	diameter(mi)	orbitradius(mi)	orbitperiod(earthday)	rotationperiod(earthday)
-stars		Stars		NULL	1000000000000	0		0			0
-sun		Sun		NULL	864337		0		0			0
+stars		Stars		NULL	100000000000	0		0			0
+sun		Sun		NULL	864337		0		0			30
 mercury		Mercury		Sun	3032		36000000	88			58.65
-venus		Venus		Sun	7521		67200000	255			243.02
+venus		Venus		Sun	7521		67200000	255			-243.02
 earth		Earth		Sun	7926		93000000	365.0			1.0
 earthmoon	EarthMoon	Earth	2159		239000		27.322			27.32
 mars		Mars		Sun	4221		141600000	693			1.025
 jupiter		Jupiter		Sun	88846		483800000	4343.5			0.4125
 saturn		Saturn		Sun	74897		890800000	10767.5			0.4458
-uranus		Uranus		Sun	31763		1784800000	30660.0			0.7167
+uranus		Uranus		Sun	31763		1784800000	30660.0			-0.7167
 neptune		Neptune		Sun	30775		2793100000	60225.0			0.6708
-pluto		Pluto		Sun	1464		3670000000	90520.0			6.3875
-rings		rings		Saturn	50000		0		0			1
+pluto		Pluto		Sun	1464		3670000000	90520.0			-6.3875
+saturnrings	SaturnRings	Saturn	50000		0		0			1
+uranusrings	UranusRings	Uranus	15000		0		0			1
+path		path		NULL	36000000	0		0			0	
+path		path		NULL	67200000	0		0			0	
+path		path		NULL	93000000	0		0			0	
+path		path		NULL	141600000	0		0			0	
+path		path		NULL	483800000	0		0			0
+path		path		NULL	890800000	0		0			0
+path		path		NULL	1784800000	0		0			0
+path		path		NULL	2793100000	0		0			0	
+path		path		NULL	3670000000	0		0			0	
+		
+			
+			
+			
+								

@@ -136,6 +136,7 @@ bool Graphics::LoadObjects()
   string tmp;
   stringstream buffer;
   int idx = 0;
+  counter = 0;
 
   fstream fin;
   fin.open("../SolarSystem.txt", std::fstream::in);
@@ -166,6 +167,12 @@ bool Graphics::LoadObjects()
       // cout << tmp << endl;
       objects.push_back(new Object(("../assets/" + tmp + ".obj").c_str()));
       buffer >> tmp;
+
+      if (tmp == "path" && counter == 0)
+      {
+          counter = idx;
+      }
+
       objects[idx] -> setName(tmp.c_str());
       cout << "object name is " << objects[idx] -> getName() << endl;
       buffer >> tmp;
@@ -230,7 +237,12 @@ void Graphics::Render()
   for(int i = 0; i < objects.size(); i++)
   {
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(objects[i]->GetModel()));
-    objects[i]->Render();	
+    if (i >= counter && orbitPath == false)
+    {
+
+    }
+    else
+      objects[i]->Render();	
   }
 
   // Get any errors from OpenGL
@@ -300,4 +312,16 @@ void Graphics::changeSpeed(int direction)
 {
   speedScale += 0.5 * direction;
   cout << "speed: " << speedScale << "x" << endl;
+}
+
+void Graphics::renderPath(int orbPath)
+{
+  renderOrbitPath = renderOrbitPath * orbPath;
+  if (renderOrbitPath > 0)
+  {
+    orbitPath = true;
+  }
+
+  else
+    orbitPath = false;
 }

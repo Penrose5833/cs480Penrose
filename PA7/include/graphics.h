@@ -25,10 +25,16 @@ class Graphics
     void rotateCamera(int, int, unsigned int);
     Object* getObjectPtr(string);
     void changeSpeed(int);
+    void renderPath(int);
 
   private:
     float scalePower;
     float speedScale;
+
+    int counter;
+    int renderOrbitPath = -1;
+    bool orbitPath;
+
     std::string ErrorString(GLenum error);
 
     Camera *m_camera;

@@ -45,11 +45,16 @@ bool Graphics::Initialize(int width, int height)
   }
  
   numObjects = 6;
+  std::string file;
+  std::cout << "Please Drag and Drop your object file in the command line" << endl;
+  std::cin >> file;
 
+  file.erase(file.begin()+0);
+  file.erase(file.end()-1);
+  std::cout << file;
    for (int i = 0; i < numObjects; i++)
   { 
-    solarObject.push_back(new Object("../objects/box.obj"));
-
+    solarObject.push_back(new Object(file));
   }
 
 //Sun
