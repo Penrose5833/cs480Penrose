@@ -26,3 +26,6 @@ This project will load models using assimp. To run this project ```cd PA5``` and
 
 ## PA6: Assimp Texture Loading
 This project will load textures using assimp. To run this project ```cd PA6``` and then follow the instructions in the README.md.
+
+## PA7: Solar System
+This project simulates a solar system. To run this project ```cd PA7``` and then follow the instructions in the README.md.
