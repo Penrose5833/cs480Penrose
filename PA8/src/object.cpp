@@ -108,7 +108,7 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
   }
   btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, shape, inertia);
   rigidBody = new btRigidBody(shapeRigidBodyCI);
-  rigidBody->setRestitution(.75);
+  rigidBody->setRestitution(.5);
   dynamicsWorld->addRigidBody(rigidBody); //, COLLIDE_MASK, CollidesWith);
 
 
@@ -194,6 +194,7 @@ void Object::Update(unsigned int dt, glm::mat4 parentTranslation)
   btTransform trans;
   btScalar m[16];
   rigidBody->getMotionState()->getWorldTransform(trans);
+  rigidBody->activate(true);
   trans.getOpenGLMatrix(m); 
   model = glm::make_mat4(m);
 }

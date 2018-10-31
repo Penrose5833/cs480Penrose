@@ -21,7 +21,7 @@ Graphics::~Graphics()
   dispatcher = NULL;
   delete solver;
   solver = NULL;
-  delete dynamicsWorld;
+  //delete dynamicsWorld;
   dynamicsWorld = NULL;
 }
 

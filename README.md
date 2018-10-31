@@ -29,3 +29,6 @@ This project will load textures using assimp. To run this project ```cd PA6``` a
 
 ## PA7: Solar System
 This project simulates a solar system. To run this project ```cd PA7``` and then follow the instructions in the README.md.
+
+## PA8: Bullet
+This project implements the bullet physics library with both static and dynamic objects. To run this project ```cd PA8``` and then follow the instruction in the README.md.
