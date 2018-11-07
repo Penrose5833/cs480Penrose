@@ -21,6 +21,9 @@ uniform vec4 SpotDirection;
 uniform float SpotCutoff;
 uniform float Shininess;
 
+float angle;
+
+
 void main(void)
 {
 	vec3 N = normalize((viewMatrix * modelMatrix) * vec4(fN, 0.0)).xyz;
@@ -39,7 +42,9 @@ void main(void)
 	vec4 specular = Ks * SpecularProduct;
 	if( dot(L,N) < 0.0) specular = vec4(0.0, 0.0, 0.0, 1.0);
 
-	if( cos(dot(spotL, N)) > SpotCutoff)
+	angle = (dot(normalize(spotL), normalize(SpotDirection).xyz));
+	angle = max(angle, 0);
+	if( acos(angle) < SpotCutoff)
 	{
 		float spotKd = max(dot(spotL, N), 0.0);
 		vec4 spotDiffuse = spotKd * vec4(1, 0, 0, 1);
@@ -47,7 +52,8 @@ void main(void)
 		vec4 spotSpecular = spotKs * vec4(1, 0, 0, 1);
 		if ( dot(spotL, N) < 0.0)
 			spotSpecular = vec4(0.0, 0.0, 0.0, 1.0);
-		frag_color = (ambient + diffuse + specular + spotDiffuse + spotSpecular)  * texture2D(gSampler, uv.xy);
+
+		frag_color = (ambient + diffuse + specular + spotDiffuse + spotSpecular) * texture2D(gSampler, uv.xy);
 	}
 
 	else

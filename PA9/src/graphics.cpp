@@ -339,11 +339,11 @@ void Graphics::Render()
   //Light uniforms
   glUniform4f(m_ambient, .25, .25, .25, 1);
   glUniform4f(m_light, 1, 1, 0, 1);
-  glUniform4f(m_spot, 0, -5, 5, 1);
+  glUniform4f(m_spot, 0, 5, 5, 1);
 
-  glm::vec4 temp = glm::vec4 (0, -5, 5, 1) - (objects[2]->GetModel()*glm::vec4(0,0,0,1));
+  glm::vec4 temp = glm::vec4 (0, 5, 5, 1) - (objects[2]->GetModel()*glm::vec4(0,0,0,1));
   glUniform4f(m_spotDirection, temp.x, temp.y, temp.z, temp.w);
-  glUniform1f(m_spotCutoff, glm::radians(10.0f));
+  glUniform1f(m_spotCutoff, glm::radians(5.0));
 
   // Render the object
   for(int i = 0; i < objects.size(); i++)
@@ -352,7 +352,7 @@ void Graphics::Render()
 
   	glUniform4f(m_diffuse, .5, .5, .5, 1);
   	glUniform4f(m_specular, 1, 1, 1, 1);
-  	glUniform1f(m_shininess, 25);
+  	glUniform1f(m_shininess, 10);
 
   	objects[i]->Render();
   }
