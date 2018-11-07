@@ -42,7 +42,7 @@ void main(void)
 	vec4 specular = Ks * SpecularProduct;
 	if( dot(L,N) < 0.0) specular = vec4(0.0, 0.0, 0.0, 1.0);
 
-	angle = (dot(normalize(spotL), normalize(SpotDirection).xyz));
+	angle = (dot((spotL), normalize(SpotDirection).xyz));
 	angle = max(angle, 0);
 	if( acos(angle) < SpotCutoff)
 	{

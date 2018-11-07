@@ -339,9 +339,9 @@ void Graphics::Render()
   //Light uniforms
   glUniform4f(m_ambient, .25, .25, .25, 1);
   glUniform4f(m_light, 1, 1, 0, 1);
-  glUniform4f(m_spot, 0, 5, 5, 1);
+  glUniform4f(m_spot, 0, 5, 10, 1);
 
-  glm::vec4 temp = glm::vec4 (0, 5, 5, 1) - (objects[2]->GetModel()*glm::vec4(0,0,0,1));
+  glm::vec4 temp = (glm::vec4 (0, 5, 10, 1)) - ((objects[2]->GetModel()*glm::vec4(0,0,0,1)));
   glUniform4f(m_spotDirection, temp.x, temp.y, temp.z, temp.w);
   glUniform1f(m_spotCutoff, glm::radians(5.0));
 

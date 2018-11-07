@@ -37,7 +37,7 @@ void main(void)
 
 	if(SpotPosition.w != 0.0)
 	{
-	fsL = SpotPosition.xyz - pos.xyz;
+		fsL = SpotPosition.xyz - pos.xyz;
 	}
 
 
