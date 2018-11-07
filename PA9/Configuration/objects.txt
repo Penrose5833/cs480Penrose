@@ -1,0 +1,7 @@
+
+# obj		shape		scale	mass	rest	frict	inertX	inertY	inertZ	initX	initY	initZ
+Pinball		matrix		1	0	0	0.5	0	0	0	0	0	0
+cylinder	cylinder	1	0	.1	0.5	0	0	0	0	0	1
+# cylinder1	cylinder	1	0	.1	0.5	0	0	0	-1	0	-1
+SteelBall	sphere		.3	1	.3	0.5	0	0	0	0	10	0
+BrickCube	cube		1	.5	.3	0.3	0	0	0	.1	10	-1
