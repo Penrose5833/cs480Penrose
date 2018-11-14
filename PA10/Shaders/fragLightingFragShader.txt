@@ -42,16 +42,16 @@ void main(void)
 	vec4 specular = Ks * SpecularProduct;
 	if( dot(L,N) < 0.0) specular = vec4(0.0, 0.0, 0.0, 1.0);
 
-	angle = (dot((spotL), normalize(SpotDirection).xyz));
+	angle = (dot(normalize(spotL), normalize(SpotDirection).xyz));
 	angle = max(angle, 0);
 	if( acos(angle) < SpotCutoff)
 	{
 		float spotKd = max(dot(spotL, N), 0.0);
-		vec4 spotDiffuse = spotKd * vec4(1, 0, 0, 1);
+		vec4 spotDiffuse = spotKd * vec4(.2, .2, .2, 1);
 		float spotKs = pow( max(dot(N, spotH), 0.0), Shininess);
-		vec4 spotSpecular = spotKs * vec4(1, 0, 0, 1);
+		vec4 spotSpecular = spotKs * vec4(.5, .5, 0, 1);
 		if ( dot(spotL, N) < 0.0)
-			spotSpecular = vec4(0.0, 0.0, 0.0, 1.0);
+			spotSpecular = vec4(1.0, 0.0, 0.0, 1.0);
 
 		frag_color = (ambient + diffuse + specular + spotDiffuse + spotSpecular) * texture2D(gSampler, uv.xy);
 	}

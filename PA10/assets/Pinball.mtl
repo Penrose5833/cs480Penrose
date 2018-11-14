@@ -1,5 +1,5 @@
 # Blender MTL File: 'PinballTABLEONLY.blend'
-# Material Count: 18
+# Material Count: 13
 
 newmtl BottomInitialTrack
 Ns 96.078431
@@ -34,6 +34,17 @@ d 1.000000
 illum 2
 map_Kd GreyTexture.jpg
 
+newmtl FlipperWall
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd GreyTexture.jpg
+
 newmtl Pinball.Box
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
@@ -46,17 +57,6 @@ illum 2
 map_Kd GrayWood.jpg
 
 newmtl Plunger
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd GreyTexture.jpg
-
-newmtl Plunger_GreyTexture.jpg
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
@@ -122,62 +122,7 @@ d 1.000000
 illum 2
 map_Kd GreyTexture.jpg
 
-newmtl TopBottom
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd GreyTexture.jpg
-
-newmtl TopBottom_GreyTexture.jpg
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd GreyTexture.jpg
-
 newmtl TopInitialTrack
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd GreyTexture.jpg
-
-newmtl TopTrack
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 0.150000
-illum 2
-map_Kd GreyTexture.jpg
-
-newmtl WallBottomSide1
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd GreenPaper.jpg
-
-newmtl WallBottomSide1_GreyTexture.jpg
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
@@ -197,4 +142,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd GreyTexture.jpg
+map_Kd Silver.jpg

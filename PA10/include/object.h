@@ -24,10 +24,18 @@ class Object
     void setShape(std::string);
     void setRestitution(float);
     void setFriction(float);
+    void applyImpulse();
 
     glm::mat4 GetModel();
     glm::mat4 GetTranslation();
 
+    glm::vec4 GetDiffuse();
+    glm::vec4 GetSpecular();
+    float GetShininess();
+
+    void adjustSpecularBrightness();
+    void adjustDiffuseBrightness();
+    void adjustShininess();
   private:
     glm::mat4 model;
     glm::mat4 translationMat;
@@ -57,6 +65,11 @@ class Object
     float restitution;
     float friction;
     std::string rigidBodyShape;
+
+    glm::vec4 diffuseVec;
+    glm::vec4 specularVec;
+    float shininess;
+
 };
 
 #endif /* OBJECT_H */

@@ -48,8 +48,6 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_Triangulate);
 
-
-
   if(scene == NULL)
   {
     return false;
@@ -131,10 +129,20 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
   dynamicsWorld->addRigidBody(rigidBody); //, COLLIDE_MASK, CollidesWith);
   rigidBody->setSleepingThresholds(0,0);
 
+  aiColor3D diffuse, specular;
+  scene->mMaterials[1]->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+  scene->mMaterials[1]->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+  scene->mMaterials[1]->Get(AI_MATKEY_SHININESS, shininess);
+
+  diffuseVec = glm::vec4(diffuse[0], diffuse[1], diffuse[2], 1);
+  specularVec = glm::vec4(specular[0], specular[1], specular[2], 1);
+
   aTexture.resize(scene->mNumMeshes);
 
+  // cout << scene -> mNumMeshes <<'\n';
   for(int meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
   {
+    // cout << meshIndex << '\n';
     VB.resize(scene->mNumMeshes);
     IB.resize(scene->mNumMeshes);
 
@@ -145,14 +153,14 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
     glGenBuffers(1, &IB[meshIndex]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[meshIndex]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices[meshIndex].size(), &Indices[meshIndex][0], GL_STATIC_DRAW);
-  
+
     aiString textureFilePath;
 
-    scene->mMaterials[meshIndex+1]->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+
+    scene->mMaterials[scene -> mMeshes[meshIndex] -> mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 
     std::string textureStringFilePath = "../assets/";
     textureStringFilePath += textureFilePath.C_Str();
-
 
     tex = new Magick::Image(textureStringFilePath);
     tex->write(&blob, "RGBA");
@@ -177,38 +185,6 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
 
 void Object::Update(unsigned int dt, glm::mat4 parentTranslation)
 {
-  // glm::mat4 rotation;
-  // glm::mat4 translation;
-  // glm::mat4 scale;
-
-//   if(spinDirection > 0)
-//   {
-//     spinAngle += spinSpeed * dt * M_PI/1000;
-//   }
-//   else
-//   {
-//     spinAngle -= spinSpeed * dt * M_PI/1000; 
-//   }
-
-//   if(orbitDirection > 0)
-//   {
-//     orbitAngle +=  orbitSpeed * dt * M_PI/1000;
-//   }
-//   else
-//   {
-//     orbitAngle -= orbitSpeed * dt * M_PI/1000;
-//   }
-  
-//   glm::vec3 translationVector(orbitRadius*glm::cos(orbitAngle), 0, orbitRadius*glm::sin(orbitAngle));
-
-//   model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0, 0.0, 0.0));
-  // rotationMat = glm::mat4(1.0f); // glm::rotate(glm::mat4(1.0f), (spinAngle), glm::vec3(0.0, 1, 0.0));
-  // translationMat = glm::mat4(1.0f); // glm::translate(parentTranslation, translationVector);
-  // scaleMat = glm::mat4(1.0f); // glm::scale(glm::mat4(1.0f), glm::vec3(size));
-
-
-  // model = translationMat * rotationMat * scaleMat;
-
   btTransform trans;
   btScalar m[16];
   rigidBody->getMotionState()->getWorldTransform(trans);
@@ -294,4 +270,45 @@ void Object::setRestitution(float x)
 void Object::setFriction(float x)
 {
   friction = x;
+}
+
+glm::vec4 Object::GetDiffuse()
+{
+  return diffuseVec;
+}
+
+glm::vec4 Object::GetSpecular()
+{
+  return specularVec;
+}
+
+float Object::GetShininess()
+{
+  return shininess;
+}
+
+void Object::adjustSpecularBrightness()
+{
+    float x = (int(specularVec.x * 10 + 1) % 10) / 10.0;
+    float y = (int(specularVec.y * 10 + 1) % 10) / 10.0;
+    float z = (int(specularVec.z * 10 + 1) % 10) / 10.0;
+    specularVec = glm::vec4(x, y, z, 1);
+}
+
+void Object::adjustDiffuseBrightness()
+{
+    float x = (int(diffuseVec.x * 10 + 1) % 10) / 10.0;
+    float y = (int(diffuseVec.y * 10 + 1) % 10) / 10.0;
+    float z = (int(diffuseVec.z * 10 + 1) % 10) / 10.0;
+    diffuseVec = glm::vec4(x, y, z, 1);
+}
+
+void Object::adjustShininess()
+{
+    shininess = int(shininess + 5) % 100;
+}
+
+void Object::applyImpulse()
+{
+	rigidBody -> applyCentralImpulse(btVector3(.3, 0, -20));
 }

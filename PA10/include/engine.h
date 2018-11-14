@@ -3,9 +3,11 @@
 
 #include <sys/time.h>
 #include <assert.h>
+#include <vector>
 
 #include "window.h"
 #include "graphics.h"
+#include "object.h"
 
 class Engine
 {
@@ -29,6 +31,7 @@ class Engine
     SDL_Event m_event;
 
     Graphics *m_graphics;
+    vector <Object*> objects;  
     unsigned int m_DT;
     long long m_currentTimeMillis;
     bool m_running;

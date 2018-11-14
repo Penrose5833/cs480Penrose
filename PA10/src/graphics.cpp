@@ -53,8 +53,10 @@ bool Graphics::Initialize(int width, int height, char *configFileName)
   dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
   xGravity = 0.0;
   yGravity = -9.81;
-  zGravity = 0.0;
+  zGravity = 3.0;
   dynamicsWorld->setGravity(btVector3(xGravity, yGravity, zGravity));
+  ambientStrength = 0.2;
+  currentObjectIndex = 0;
 
   // For OpenGL 3
   GLuint vao;
@@ -193,7 +195,7 @@ bool Graphics::setShaderUniformLocations(Shader * shaderPtr)
     printf("m_light not found\n");
     return false;
   }
-
+  
   m_spot = shaderPtr->GetUniformLocation("SpotPosition");
   if(m_spot == INVALID_UNIFORM_LOCATION)
   {
@@ -214,7 +216,6 @@ bool Graphics::setShaderUniformLocations(Shader * shaderPtr)
     printf("m_spotDirection not found\n");
     return false;
   }
-
 }
 
 bool Graphics::LoadObjects(char* configFileName)
@@ -297,10 +298,11 @@ bool Graphics::LoadObjects(char* configFileName)
       buffer >> tmp;
       tmpBtVec3.setZ(btScalar(stof(tmp)));
       objects[objects.size()-1] -> setInitialPosition(tmpBtVec3);
-
       objects[objects.size() -1] -> loadObject(dynamicsWorld);
     }
+
   }
+
 
   return true;
 }
@@ -339,22 +341,22 @@ void Graphics::Render()
   //Light uniforms
   glUniform4f(m_ambient, .25, .25, .25, 1);
   glUniform4f(m_light, 1, 1, 0, 1);
-  glUniform4f(m_spot, 0, 5, 10, 1);
+  glUniform4f(m_spot, 0, 5, 5, 1);
 
-  glm::vec4 temp = (glm::vec4 (0, 5, 10, 1)) - ((objects[2]->GetModel()*glm::vec4(0,0,0,1)));
+  glm::vec4 temp = glm::vec4 (0, 5, 5, 1) - (objects[1]->GetModel()*glm::vec4(0,0,0,1));
   glUniform4f(m_spotDirection, temp.x, temp.y, temp.z, temp.w);
-  glUniform1f(m_spotCutoff, glm::radians(5.0));
+  glUniform1f(m_spotCutoff, glm::radians(3.0));
 
   // Render the object
   for(int i = 0; i < objects.size(); i++)
   {
-  	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(objects[i]->GetModel()));
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(objects[i]->GetModel()));
 
-  	glUniform4f(m_diffuse, .5, .5, .5, 1);
-  	glUniform4f(m_specular, 1, 1, 1, 1);
-  	glUniform1f(m_shininess, 10);
+    glUniform4f(m_diffuse, .5, .5, .5, 1);
+    glUniform4f(m_specular, 1, 1, 1, 1);
+    glUniform1f(m_shininess, 10);
 
-  	objects[i]->Render();
+    objects[i]->Render();
   }
 
   // Get any errors from OpenGL
@@ -398,16 +400,6 @@ std::string Graphics::ErrorString(GLenum error)
   }
 }
 
-// void Graphics::reverseObjectSpin()
-// {
-//   objects[0]->reverseSpin();
-// }
-
-// void Graphics::reverseObjectOrbit()
-// {
-//   objects[0]->reverseOrbit();
-// }
-
 void Graphics::translateCamera(glm::vec3 direction)
 {
   m_camera->translateCamera(direction);
@@ -441,9 +433,7 @@ void Graphics::adjustGravity(char coordinate, float gravityAdjustment)
         zGravity = zGravity + gravityAdjustment;
         dynamicsWorld->setGravity(btVector3(xGravity, yGravity, zGravity));
       }
-
     }
-
 }
 
 void Graphics::toggleShader()
@@ -457,4 +447,51 @@ void Graphics::toggleShader()
 		m_currentShader = m_gourandShader;
 	}
 	setShaderUniformLocations(m_currentShader);
+}
+
+void Graphics::adjustAmbientLight()
+{
+  ambientStrength = (int(ambientStrength * 10 + 1) % 10) / 10.0 ;
+}
+
+void Graphics::cycleObjectSelection()
+{
+  currentObjectIndex = (currentObjectIndex + 1) % objects.size();
+  cout << currentObjectIndex << endl;
+}
+
+void Graphics::adjustObjectSpecularBrightness()
+{
+  objects[currentObjectIndex] -> adjustSpecularBrightness();
+}
+
+void Graphics::adjustObjectDiffuseBrightness()
+{
+  objects[currentObjectIndex] -> adjustDiffuseBrightness();
+}
+
+void Graphics::adjustObjectShininess()
+{
+  objects[currentObjectIndex] -> adjustShininess();
+}
+
+void Graphics::adjustSpotlightBrightness()
+{
+
+}
+
+void Graphics::adjustSpotlightSize()
+{
+
+}
+
+void Graphics::applyImpulse()
+{
+    glm::vec4 temp = glm::vec4 (0, 0, 0, 1) - (objects[1]->GetModel()*glm::vec4(0,0,0,1));
+
+    if (temp.x <= -2.4 && temp.z <= -2.7)
+    {
+      objects[1] -> applyImpulse();
+    }
+      
 }

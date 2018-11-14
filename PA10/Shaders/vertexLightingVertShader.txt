@@ -43,11 +43,11 @@ void main(void)
 	if( dot(spotL, N) > SpotCutoff)
 	{
 		float spotKd = max(dot(spotL, N), 0.0);
-		vec4 spotDiffuse = spotKd * vec4(1, 1, 0, 1);
+		vec4 spotDiffuse = spotKd * DiffuseProduct;
 		float spotKs = pow( max(dot(N, spotH), 0.0), Shininess);
-		vec4 spotSpecular = spotKs * vec4(1, 1, 0, 1);
+		vec4 spotSpecular = spotKs * SpecularProduct;
 		if ( dot(spotL, N) < 0.0)
-			spotSpecular = vec4(0.0, 0.0, 0.0, 1.0);
+			spotSpecular = vec4(.2, .2, 0.0, 1.0);
 		color = ambient + diffuse + specular + spotDiffuse + spotSpecular;
 	}
 

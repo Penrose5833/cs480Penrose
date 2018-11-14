@@ -113,9 +113,9 @@ void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr)
 		}
 		else if(m_event.key.keysym.sym == SDLK_DOWN)
 		{
-
 			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			m_graphics->adjustGravity('Z', 2.0);
+			m_graphics->applyImpulse();
 		}
 		else if(m_event.key.keysym.sym == SDLK_LEFT)
 		{
@@ -131,27 +131,37 @@ void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr)
 		}
 		else if(m_event.key.keysym.sym == SDLK_w)
 		{
-			//reverse orbit on down key
+			// reverse orbit on down key
 			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(0.0, 0.0, -0.5));
+			// m_graphics-> translateCamera(glm::vec3(0.0, 0.0, -0.5));
 		}
 		else if(m_event.key.keysym.sym == SDLK_a)
 		{
 			//reverse orbit on down key
 			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(-0.5, 0.0, 0.0));
+			// m_graphics-> translateCamera(glm::vec3(-0.5, 0.0, 0.0));
+			m_graphics -> cycleObjectSelection();
 		}
 		else if(m_event.key.keysym.sym == SDLK_s)
 		{
 			//reverse orbit on down key
 			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(0.0, 0.0, 0.5));
+			// m_graphics-> translateCamera(glm::vec3(0.0, 0.0, 0.5));
+			m_graphics -> adjustObjectSpecularBrightness();
 		}
 		else if(m_event.key.keysym.sym == SDLK_d)
 		{
 			//reverse orbit on down key
 			// m_graphics->reverseObjectOrbit();
-			m_graphics-> translateCamera(glm::vec3(0.5, 0.0, 0.0));
+			// m_graphics-> translateCamera(glm::vec3(0.5, 0.0, 0.0));
+			m_graphics -> adjustObjectDiffuseBrightness();
+		}
+		else if(m_event.key.keysym.sym == SDLK_f)
+		{
+			//reverse orbit on down key
+			// m_graphics->reverseObjectOrbit();
+			// m_graphics-> translateCamera(glm::vec3(0.5, 0.0, 0.0));
+			m_graphics -> adjustObjectShininess();
 		}
 		else if(m_event.key.keysym.sym == SDLK_r)
 		{
@@ -160,6 +170,10 @@ void Engine::Keyboard(int* mouseXPtr, int* mouseYPtr)
 		else if(m_event.key.keysym.sym == SDLK_t)
 		{
 			m_graphics -> toggleShader();
+		}
+		else if(m_event.key.keysym.sym == SDLK_b)
+		{
+			m_graphics -> adjustAmbientLight();
 		}
 	}
 	else if (m_event.type == SDL_KEYUP)

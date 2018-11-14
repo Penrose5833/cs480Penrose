@@ -1,6 +1,25 @@
 
 # obj		shape		scale	mass	rest	frict	inertX	inertY	inertZ	initX	initY	initZ
-Pinball	matrix		1	0	0	0.5	0	0	0	0	0	0
-# CylBumpN2S	cylinder	1	0	.1	0.5	0	0	0	0	0	1
-# SteelBall	sphere		.3	1	.3	0.5	0	0	0	0	10	0
+Pinball		matrix		1	0	0	0.5	0	0	0	0	0	0
+SteelBall	sphere		.2	1	.3	0.5	0	100	0	2.5	.2	2.85
+# cylinder	cylinder	1	0	.1	0.5	0	0	0	0	0	1
+# cylinder1	cylinder	1	0	.1	0.5	0	0	0	-1	0	-1
 # BrickCube	cube		1	.5	.3	0.3	0	0	0	.1	10	-1
+# CubeBumpN2S	matrix		1	0	10	.3	0	0	0	-.7	.25	.75
+# CylBumpN2S	matrix		1	0	10	.3	0	0	0	-.6	.25	-2
+# CylBumpN2S	matrix		1	0	50	.3	0	0	0	-.5	.9	-4
+# CylBumpN2S	matrix		1	0	20	.3	0	0	0	1.75	.25	-1.5
+CubeBump	cube		1	0	7	0	0	0	0	-.5	0	-.5
+CylBump		cylinder	1	0	7	0	0	0	0	.75	0	-1.5
+CylBump		cylinder	1	0	7	0	0	0	0	-1.75	.7	-3.5
+CylBump		cylinder	1	0	7	0	0	0	0	-.7	.7	-4.25
+CylBump		cylinder	1	0	7	0	0	0	0	-1.75	0	-3
+CylBump		cylinder	1	0	7	0	0	0	0	-2	.7	-5
+CylBump		cylinder	1	0	7	0	0	0	0	-.5	0	-4
+WallBump 	matrix		1	0	7	0	0	0	0	-.22	0	-.9
+TriLeft		matrix		1	0	0	0	0	0	0	-1.5	0	2	
+TriRight	matrix		1	0	0	0	0	0	0	.5	0	2
+TriLeftBump	matrix		1	0	7	0	0	0	0	-1.75	0	1.65
+TriRightBump	matrix		1	0	7	0	0	0	0	.75	0	1.65
+Arrows		matrix		1	0	0	0	0	0	0	0	0	0
+	

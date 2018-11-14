@@ -26,6 +26,14 @@ class Graphics
     bool createShader(Shader *, std::string vertFilePath, std::string fragFilePath);
     bool setShaderUniformLocations(Shader *);
     void toggleShader();
+    void adjustAmbientLight();
+    void cycleObjectSelection();
+    void adjustObjectSpecularBrightness();
+    void adjustObjectDiffuseBrightness();
+    void adjustObjectShininess();
+    void adjustSpotlightBrightness();
+    void adjustSpotlightSize();
+    void applyImpulse();
 
   private:
     std::string ErrorString(GLenum error);
@@ -49,6 +57,8 @@ class Graphics
     GLint m_spotCutoff;
     GLint m_spotDirection;
 
+    float ambientStrength;
+
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher *dispatcher;
@@ -61,7 +71,7 @@ class Graphics
 
 
     vector<Object*> objects;
-
+    int currentObjectIndex;
 };
 
 #endif /* GRAPHICS_H */

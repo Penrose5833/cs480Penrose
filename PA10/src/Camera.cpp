@@ -20,7 +20,7 @@ bool Camera::Initialize(int w, int h)
   glm::vec3 worldUpVec = glm::vec3(0.0f, 1.0f, 0.0f);
   glm::vec3 camTarget = glm::vec3(0.0f);
 
-  camPositionVec = glm::vec3(0.0, 5.0, 7.0);
+  camPositionVec = glm::vec3(0.0, 9.0, 7.0);
   camDirectionVec = glm::normalize(camPositionVec - camTarget); // unit vector in Direction camera points - actually the opposite direction
 
   view = glm::lookAt( camPositionVec, //Eye Position
