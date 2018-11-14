@@ -53,7 +53,7 @@ bool Graphics::Initialize(int width, int height, char *configFileName)
   dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
   xGravity = 0.0;
   yGravity = -9.81;
-  zGravity = 3.0;
+  zGravity = 0.0;
   dynamicsWorld->setGravity(btVector3(xGravity, yGravity, zGravity));
   ambientStrength = 0.2;
   currentObjectIndex = 0;

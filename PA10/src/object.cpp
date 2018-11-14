@@ -118,10 +118,12 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
     }
     shape -> calculateLocalInertia(mass, inertia);
   }
+
   else // triangle matrix shape
   {
     shape = new btBvhTriangleMeshShape(objTriMesh, true);
   }
+
   btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, shape, inertia);
   shapeRigidBodyCI.m_friction = friction;
   rigidBody = new btRigidBody(shapeRigidBodyCI);
@@ -179,6 +181,9 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
 
     glBindTexture(GL_TEXTURE_2D, 0);
   }
+  	shape = new btSphereShape(1);
+
+  	//shape->setCollisionShape(new btPlaneShape(btVector3(3, 0, 5)));
 
 	return true;
 }
