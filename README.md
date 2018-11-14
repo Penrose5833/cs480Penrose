@@ -33,5 +33,8 @@ This project simulates a solar system. To run this project ```cd PA7``` and then
 ## PA8: Bullet
 This project implements the bullet physics library with both static and dynamic objects. To run this project ```cd PA8``` and then follow the instruction in the README.md.
 
-## PA8: Lighting
+## PA9: Lighting
 This project implements perVertex and perFragment lighting. To run this project ```cd PA9``` and then follow the instruction in the README.md.
+
+## PA10: Pinball
+Pinball. To run this project ```cd PA10``` and then follow the instruction in the README.md.
