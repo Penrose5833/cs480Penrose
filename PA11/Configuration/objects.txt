@@ -1,0 +1,19 @@
+
+# obj		shape	motion	scalex scaley scalez	mass	rest	frict	inertX	inertY	inertZ	initX	initY	initZ state
+PoolTable	matrix	static	1	1	1	0	0	0.5	0	0	0	0	0	0	0
+shittyCue	cube	kinematic 1	1	1 	50 	1 	0.5 	0 	0 	0 	0 	2 	0	3
+# SteelBall	sphere	dynamic	.2	.2	.2	3	.3	0.5	0	0	0	2.5	.2	2.8	1
+# CubeBump	cube	static	1	1	1	0	2.5	0	0	0	0	-.25	0	-1.5	2
+# CylBump	cylinder static	1	1	1	0	2.5	0	0	0	0	-1.5	0	-3	2
+# CylBump	cylinder static	1	1	1	0	2.5	0	0	0	0	-.25	0	-4	2
+# CylBump	cylinder static	1	1	1	0	2.5	0	0	0	0	1	0	-3	2
+# WallBump 	matrix	 static	1	1	1	0	2	0	0	0	0	-.22	0	-.9	2
+# CornerBumps	matrix	static	1	1	1	0	2.5	0	0	0	0	0	0	0	2
+# TriLeft	matrix	 static	1	1	1	0	0	0	0	0	0	-1.5	0	1.75	0
+# TriRight	matrix	 static	1	1	1	0	0	0	0	0	0	.5	0	1.75	0
+# TriLeftBump	matrix	 static	1	1	1	0	2.5	0	0	0	0	-1.75	0	1.4	2
+# TriRightBump	matrix	 static	1	1	1	0	2.5	0	0	0	0	.75	0	1.4	2
+# Arrows	matrix	 static	1	1	1	0	0	0	0	0	0	0	0	0	0
+# LeftFlipper	cube	kinematic 1	1	1 	50 	1 	0.5 	0 	0 	0 	-1.65 	0.0 	2.75	3
+# RightFlipper	cube 	kinematic 1 	1 	1 	50 	1 	0.5 	0 	0 	0 	0.65	0.0 	2.75	4
+# BottomPart	matrix 	static	1	1	1	0	0	0	0	0	0	0	0	0	5
