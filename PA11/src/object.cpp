@@ -163,6 +163,11 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
   btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, shape, inertia);
 
   shapeRigidBodyCI.m_friction = friction;
+  // if(state == 1)
+  // {
+    shapeRigidBodyCI.m_rollingFriction = 0.005;
+    shapeRigidBodyCI.m_spinningFriction = 0.1;
+  // }
   rigidBody = new btRigidBody(shapeRigidBodyCI);
   // std::cout << "RR" << std::endl;
   if(motionState == "kinematic")
@@ -502,10 +507,15 @@ btRigidBody* Object::getRigidBody()
   return rigidBody;
 }
 
-// void Object::setState(int input)
-// {
-//   state = input;
-// }
+void Object::setState(int input)
+{
+  state = input;
+}
+
+int Object::getState()
+{
+  return state;
+}
 
 // void Object::setFlip(bool x)
 // {

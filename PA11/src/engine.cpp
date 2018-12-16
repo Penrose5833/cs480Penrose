@@ -23,6 +23,9 @@ Engine::~Engine()
   delete m_graphics;
   m_window = NULL;
   m_graphics = NULL;
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
+  ImGui::DestroyContext();
 }
 
 bool Engine::Initialize(char* configFileName)
@@ -42,6 +45,15 @@ bool Engine::Initialize(char* configFileName)
     printf("The graphics failed to initialize.\n");
     return false;
   }
+
+
+ 	//MENU
+ 	ImGui::CreateContext();
+	ImGuiIO& imgui_io = ImGui::GetIO(); (void)imgui_io;
+	ImGui_ImplSDL2_InitForOpenGL(m_window->getSDLWindow(), m_window->getGLContext());
+	ImGui_ImplOpenGL3_Init("#version 130"); // GL 3.0 + GLSL 130
+	ImGui::StyleColorsDark();
+
   
 
   // Set the time
@@ -69,35 +81,80 @@ void Engine::Run()
 
  	// SDL_SetRelativeMouseMode(SDL_TRUE);
 
+ 	m_running = true;
+
 	while(m_running)
 	{
 
-		// Update the DT
-		m_DT = getDT();
+	// Update the DT
+	m_DT = getDT();
 
-		// Check the keyboard input
-		while(SDL_PollEvent(&m_event) != 0)
-		{
-		  Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
-		}
+	// Start Dear ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(m_window->getSDLWindow());
+	ImGui::NewFrame();
 
+	// Check input
+	while(SDL_PollEvent(&m_event) != 0)
+	{
+		ImGui_ImplSDL2_ProcessEvent(&m_event); // Dear ImGui input
+		Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
+		// Mouse();
+	}
 
-		// Update and render the graphics
-		if(!m_pause)
-			m_graphics->Update(m_DT);
-		else
-			m_graphics->Update(0);
+	// My menu
+	{
+	ImGui::Begin("Hello, World!");
+	ImGui::Text("Some text.");
+	ImGui::End();
+	}
+
+	// Update and render the graphics
+	if(!m_pause)
+		m_graphics->Update(m_DT);
+	else
+		m_graphics->Update(0);
 		
-		
+	m_graphics->Render();
 
-		m_graphics->Render();
-		
+	// Dear ImGui rendering
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		// Swap to the Window
-		m_window->Swap();
-		
+	// Swap to the Window
+	m_window->Swap();
 
 	}
+
+	// while(m_running)
+	// {
+
+	// 	// Update the DT
+	// 	m_DT = getDT();
+
+	// 	// Check the keyboard input
+	// 	while(SDL_PollEvent(&m_event) != 0)
+	// 	{
+	// 	  Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
+	// 	}
+
+
+	// 	// Update and render the graphics
+	// 	if(!m_pause)
+	// 		m_graphics->Update(m_DT);
+	// 	else
+	// 		m_graphics->Update(0);
+		
+		
+
+	// 	m_graphics->Render();
+		
+
+	// 	// Swap to the Window
+	// 	m_window->Swap();
+		
+
+	// }
 }
 
 void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned int dt)
@@ -145,23 +202,27 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		{
 			// m_graphics->translateCamera(glm::vec3(0.0, -0.5, 0.0));
 			// m_graphics->adjustGravity('Z', -2.0);
+			m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
 		}
 		else if(m_event.key.keysym.sym == SDLK_DOWN)
 		{
 			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('Z', 2.0);
+			m_graphics->applyImpulse(btVector3(0,-.02,0.5));
 		}
 		else if(m_event.key.keysym.sym == SDLK_LEFT)
 		{
 			// m_graphics->setLeftFlip(true);
 			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('X', -2.0);
+			m_graphics->applyImpulse(btVector3(-0.5,-.02,0));
 		}
 		else if(m_event.key.keysym.sym == SDLK_RIGHT)
 		{
 			// m_graphics->setRightFlip(true);
 			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('X', 2.0);
+			m_graphics->applyImpulse(btVector3(0.5,-.02,0));
 		}
 		else if(m_event.key.keysym.sym == SDLK_w)
 		{
@@ -225,12 +286,14 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		{
 			//m_graphics->translateCamera(glm::vec3(0.0, -0.5, 0.0));
 			// m_graphics->adjustGravity('Z', 2.0);
+			m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
 		}
 		else if(m_event.key.keysym.sym == SDLK_DOWN)
 		{
 			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('Z', -2.0);
 			// m_graphics->applyImpulse();
+			m_graphics->applyImpulse(btVector3(0,-.02,.5));
 		}
 		// else if(m_event.key.keysym.sym == SDLK_LEFT)
 		// {
@@ -247,11 +310,13 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		{
 			// m_graphics -> setRightFlip(false);
 			//m_graphics->applyPaddleImpulseRight();
+			m_graphics->applyImpulse(btVector3(.5,-.02,0));
 		}
 		else if(m_event.key.keysym.sym == SDLK_LEFT)
 		{
 			// m_graphics -> setLeftFlip(false);
 			//m_graphics->applyPaddleImpulseLeft();
+			m_graphics->applyImpulse(btVector3(-.5,-.02,0));
 		}
 	}
 	// else if (m_event.type == SDL_MOUSEBUTTONDOWN)

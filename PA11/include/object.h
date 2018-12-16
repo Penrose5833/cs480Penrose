@@ -25,7 +25,8 @@ class Object
     void setRestitution(float);
     void setFriction(float);
     void setMotionState(std::string);
-    // void setState(int);
+    void setState(int);
+    int getState();
     // void setFlip(bool);
     // void setLeftFlip(bool);
 
@@ -81,7 +82,7 @@ class Object
     float shininess;
     // float angle;
     // bool movingUp;
-    // int state;
+    int state;
 
 
 };

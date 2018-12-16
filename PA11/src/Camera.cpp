@@ -77,6 +77,22 @@ void Camera::translateCamera(SDL_Keycode key, unsigned int dt, bool moveCue)
                       glm::vec3(0,0,0), //Focus point
                       camUpVec); //Positive Y is up
 
+  // btTransform trans = rigidBody->getCenterOfMassTransform();
+  //   //trans.setOrigin(btVector3(0,2,0));
+  //   btQuaternion transrot = trans.getRotation();
+  //   // btQuaternion rotquat;
+  //   // rotquat = rotquat.getIdentity();
+  //   // rotquat.setX(0);
+  //   // rotquat.setY(-0.001);
+  //   // rotquat.setZ(0);
+
+  //   transrot.setEuler(angle,0,0);
+  //   trans.setRotation(transrot);
+  //   trans.setOrigin(initialPosition);
+  //   // trans.setOrigin(btVector3(origin.x(),origin.y(),origin.z()));
+  //   // rigidBody-> getMotionState() -> setCenterOfMassTransform(trans);
+  //   rigidBody -> getMotionState() -> setWorldTransform(trans);
+
 }
 
 void Camera::rotateCamera(int X, int Y)

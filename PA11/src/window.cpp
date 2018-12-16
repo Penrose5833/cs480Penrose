@@ -43,6 +43,8 @@ bool Window::Initialize(const string &name, int* width, int* height)
   }
 
   gWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, *width, *height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+  SDL_SetWindowResizable(gWindow, SDL_TRUE);
+
   if(gWindow == NULL)
   {
     printf("Widow failed to create: %s\n", SDL_GetError());
@@ -64,6 +66,7 @@ bool Window::Initialize(const string &name, int* width, int* height)
     return false;
   }
 
+
   return true;
 }
 
@@ -71,3 +74,15 @@ void Window::Swap()
 {
   SDL_GL_SwapWindow(gWindow);
 }
+
+SDL_Window* Window::getSDLWindow()
+{
+	return gWindow;
+}
+
+
+SDL_GLContext Window::getGLContext()
+{
+	return gContext;
+}
+

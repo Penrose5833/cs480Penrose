@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 // struct ScoringContactResultCallback : public btCollisionWorld::ContactResultCallback
 // {
@@ -48,6 +49,71 @@
 //   bool* lostLife;
 //   bool* ballInPlay;
 // };
+
+struct PocketContactResultCallback : public btCollisionWorld::ContactResultCallback
+{
+  PocketContactResultCallback(bool* ballInPocketIn) : ballInPocket(ballInPocketIn) {}
+
+  btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0,
+               int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1)
+  {
+    // if(*elapsedDT != 0)
+    // {
+    //   *score += 10 * *currentCombo;
+    //   std::cout << "Score: " << *score << " Combo: x" << *currentCombo << std::endl;
+    //   *currentCombo += 1;
+    //   *elapsedDT = 0;
+    // }
+
+    *ballInPocket = true;
+    
+  }
+
+  // int *score;
+  // unsigned int * elapsedDT;
+  // int *currentCombo;
+  bool *ballInPocket;
+};
+
+struct BallContactResultCallback : public btCollisionWorld::ContactResultCallback
+{
+  BallContactResultCallback(int* gameStateIn, int* ballStateIn, bool* typeContactMadeIn) : gameState(gameStateIn), ballState(ballStateIn), typeContactMade(typeContactMadeIn) {}
+
+  btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0,
+               int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1)
+  {
+    // if(*elapsedDT != 0)
+    // {
+    //   *score += 10 * *currentCombo;
+    //   std::cout << "Score: " << *score << " Combo: x" << *currentCombo << std::endl;
+    //   *currentCombo += 1;
+    //   *elapsedDT = 0;
+    // }
+  	std::cout << "Contact with " << *ballState << "ball" << std::endl;
+    if(*gameState  == 2)
+    {
+    	if(*ballState >= 1 and *ballState <= 7)
+    	{
+    		*typeContactMade = true;
+    	}
+    }
+    else if(*gameState == 4)
+    {
+    	if(*ballState >= 9 and *ballState <= 15)
+    	{
+    		*typeContactMade = true;
+    	}
+    }
+    
+  }
+
+  // int *score;
+  // unsigned int * elapsedDT;
+  // int *currentCombo;
+  int* gameState;
+  int* ballState;
+  bool* typeContactMade;
+};
 
 Graphics::Graphics()
 {
@@ -144,6 +210,11 @@ bool Graphics::Initialize(int width, int height, char *configFileName)
   // ballInPlay = true;
   // elapsedDT = 150;
   // currentCombo = 1;
+
+  ballInPocket = false;
+  typeContact = false;
+  gameState = 1;
+  scratched = false;
 
   return true;
 }
@@ -297,7 +368,6 @@ bool Graphics::LoadObjects(char* configFileName)
 
 
     buffer >> tmp;
-    cout << tmp << endl;
     if(buffer.eof())
     {
       //cout << tmp << endl;
@@ -305,13 +375,11 @@ bool Graphics::LoadObjects(char* configFileName)
     }
     if(tmp == "#")
     {
- 
       //cout << tmp << endl;
       buffer.ignore(1000, '\n');
     }
     else
     {
-    
       // cout << tmp << "s" << endl;
       objects.push_back(new Object());
 
@@ -385,7 +453,7 @@ bool Graphics::LoadObjects(char* configFileName)
       objects[objects.size()-1] -> setInitialPosition(tmpBtVec3);
       buffer >> tmp;
       // cout << tmp << "k"<< endl;
-      // objects[objects.size()-1]->setState(stoi(tmp));
+       objects[objects.size()-1]->setState(stoi(tmp));
       // std::cout << "loadObject" << std::endl;
 
       // if(stoi(tmp) == 1)
@@ -409,21 +477,47 @@ bool Graphics::LoadObjects(char* configFileName)
       //   deathIndex = objects.size() -1;
       // }
 
+       if(stoi(tmp) >= 0 and stoi(tmp) <= 15)
+       {
+          ballIndices.push_back(objects.size() - 1);
+          if(stoi(tmp) >= 1 and stoi(tmp) <= 7)
+          {
+          	solidIndices.push_back(objects.size()-1);
+          }
+          else if(stoi(tmp) == 8)
+          {
+          	eightBallIndex = objects.size() - 1;
+          }
+          else if(stoi(tmp) >= 9 and stoi(tmp) <= 15)
+          {
+          	stripeIndices.push_back(objects.size() - 1);
+          }
+          else if(stoi(tmp) == 0)
+          {
+          	cueBallIndex = (objects.size() - 1);
+          }
+       }
+       else if(stoi(tmp) >= -5 and stoi(tmp) <= -1)
+       {
+          pocketIndices.push_back(objects.size() -1);
+       }
+
       objects[objects.size() -1] -> loadObject(dynamicsWorld);
       
 
       // std::cout << tmp << std::endl;
     }
+    cout << objects.size() << endl;
 
   }
-
-   m_camera -> setCueObject(objects[1]);
+  
   // make glass cover
   // btCollisionShape* shape = new btStaticPlaneShape(btVector3(0, -1, 0), 0);
   // btDefaultMotionState* shapeMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0,0.5,0)));
   // btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(0, shapeMotionState, shape, btVector3(0, 0, 0));
   // btRigidBody* rigidBody = new btRigidBody(shapeRigidBodyCI);
   // dynamicsWorld-> addRigidBody(rigidBody);
+  m_camera -> setCueObject(objects[1]);
 
   return true;
 }
@@ -441,6 +535,164 @@ void Graphics::Update(unsigned int dt)
 
   // ScoringContactResultCallback scoreCallback(&score, &elapsedDT, &currentCombo);
   // ResetContactResultCallback resetCallback(&lives, &lifeLost, &ballInPlay);
+  PocketContactResultCallback pocketCallback(&ballInPocket);
+
+  for(int pocketIndex = 0; pocketIndex < pocketIndices.size(); pocketIndex++)
+  {
+    for(int ballIndex = 0; ballIndex < ballIndices.size(); ballIndex++)
+    {
+        dynamicsWorld->contactPairTest(objects[ballIndices[ballIndex]]->getRigidBody(), objects[pocketIndices[pocketIndex]]->getRigidBody(), pocketCallback);
+        if(ballInPocket == true)
+        {
+          ballEnteredPocket(ballIndices[ballIndex], pocketIndices[pocketIndex]);
+        }
+    }
+  }
+
+
+  	
+
+
+  	if(gameState == 2 or gameState == 4)
+  	{
+  		int ballState = 0;
+  		BallContactResultCallback ballCallback(&gameState, &ballState, &typeContact);
+
+		for(int ballIndex = 0; ballIndex < ballIndices.size(); ballIndex++)
+	    {
+	    	if(ballIndices[ballIndex] != cueBallIndex)
+	    	{
+	    		ballState = objects[ballIndices[ballIndex]]->getState();
+	        	dynamicsWorld->contactPairTest(objects[ballIndices[ballIndex]]->getRigidBody(), objects[cueBallIndex]->getRigidBody(), ballCallback);
+	    	}
+	        
+
+	    }
+
+		bool moving = false;
+	  	for(int ballIndex = 0; ballIndex < ballIndices.size(); ballIndex++)
+		{
+		  	btScalar lx = objects[ballIndices[ballIndex]]->getRigidBody()->getLinearVelocity().getX();
+		  	btScalar ly = objects[ballIndices[ballIndex]]->getRigidBody()->getLinearVelocity().getY();
+		  	btScalar lz = objects[ballIndices[ballIndex]]->getRigidBody()->getLinearVelocity().getZ();
+		  	btScalar ax = objects[ballIndices[ballIndex]]->getRigidBody()->getAngularVelocity().getX();
+		  	btScalar ay = objects[ballIndices[ballIndex]]->getRigidBody()->getAngularVelocity().getY();
+		  	btScalar az = objects[ballIndices[ballIndex]]->getRigidBody()->getAngularVelocity().getZ();
+
+		  	if((btFabs(lx) > 1e-3) or (btFabs(ly) > 1e-3) or (btFabs(lz) > 1e-3) or (btFabs(ax) > 1e-3) or (btFabs(ay) > 1e-3) or (btFabs(az) > 1e-3) )
+		  	{
+		  		moving = true;
+		  		
+			  	
+		  	}
+		  	// if(ballIndex == 0)
+		  	// 	{
+		  	// 		std::cout << "ball " << ballIndex << ": l: " << lx
+			  // 				<< " " << ly
+			  // 				<< " " << lz
+			  // 				<< " a: " << ax
+			  // 				<< " " << ay
+			  // 				<< " " << az << std::endl;
+		  	// 	}
+		}
+		
+
+
+		if(!moving)
+		{
+			if(gameState == 2)
+			{
+				std::cout << typeContact << std::endl;
+
+				if(typeContact and !scratched)
+				{
+					bool maintainTurn = false;
+					while(standbyIndices.size() != 0)
+					{
+
+						std::reverse(standbyIndices.begin(),standbyIndices.end());
+						int standbyBallState = objects[standbyIndices.back()]->getState();
+						btTransform tmpTransform = objects[standbyIndices.back()]->getRigidBody()->getCenterOfMassTransform();
+					    outOfPlayIndices.push_back(standbyIndices.back());
+					    tmpTransform.setOrigin(btVector3(5.5,.2,2.85-.5*(outOfPlayIndices.size()-1)));
+					    objects[standbyIndices.back()]->getRigidBody()->proceedToTransform(tmpTransform);
+					    
+					    standbyIndices.pop_back();
+
+					    if(standbyBallState >= 1 and standbyBallState <= 7)
+					    {
+					    	maintainTurn = true;
+					    }
+
+
+					}
+
+					if(maintainTurn)
+					{
+						gameState = 1;
+					}
+					else
+					{
+						gameState = 3;
+					}
+				}
+				else
+				{
+					gameState = 3;
+				}
+
+				typeContact = false;
+			}
+			else if(gameState == 4)
+			{
+				std::cout << typeContact << std::endl;
+				if(typeContact and !scratched)
+				{
+					bool maintainTurn = false;
+					while(standbyIndices.size() != 0)
+					{
+
+						std::reverse(standbyIndices.begin(),standbyIndices.end());
+						int standbyBallState = objects[standbyIndices.back()]->getState();
+						btTransform tmpTransform = objects[standbyIndices.back()]->getRigidBody()->getCenterOfMassTransform();
+					    outOfPlayIndices.push_back(standbyIndices.back());
+					    tmpTransform.setOrigin(btVector3(5.5,.2,2.85-.5*(outOfPlayIndices.size()-1)));
+					    objects[standbyIndices.back()]->getRigidBody()->proceedToTransform(tmpTransform);
+					    
+					    standbyIndices.pop_back();
+
+					    if(standbyBallState >= 9 and standbyBallState <= 15)
+					    {
+					    	maintainTurn = true;
+					    }
+
+
+					}
+
+					if(maintainTurn)
+					{
+						gameState = 3;
+					}
+					else
+					{
+						gameState = 1;
+					}
+				}
+				else
+				{
+					gameState = 1;
+				}
+				typeContact = false;
+			}
+
+			std::cout << "Balls have stopped moving" << std::endl;
+			std::cout << "gameState:" << gameState << std::endl;
+		}
+
+  	}
+
+
+  
   // elapsedDT += dt;
   // if(elapsedDT > 150)
   // {
@@ -482,6 +734,8 @@ void Graphics::Update(unsigned int dt)
 
 void Graphics::Render()
 {
+
+	impulsed = false;
   //clear the screen
   glClearColor(0.0, 0.0, 0.2, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -658,16 +912,29 @@ void Graphics::toggleShader()
 //   objects[leftPaddleIndex]->getRigidBody()->applyImpulse(btVector3(0,0,-5), btVector3(1,0,1));
 // }
 
-// void Graphics::applyImpulse()
-// {
-//   glm::vec4 temp = glm::vec4 (0,0,0,1) - (objects[ballIndex]->GetModel()*glm::vec4(0,0,0,1));
+void Graphics::applyImpulse(btVector3 inputImpulse)
+{
+  glm::vec4 temp = glm::vec4 (0,0,0,1) - (objects[1]->GetModel()*glm::vec4(0,0,0,1));
 
-//   if(temp.x <= -2.4 && temp.z <= -2.7 && lives > 0)
-//   {
-//       ballInPlay = true;
-//     objects[ballIndex]->getRigidBody()->applyCentralImpulse(btVector3(0,0,-35));
-//   }
-// }
+  // if(temp.x <= -2.4 && temp.z <= -2.7 && lives > 0)
+  // {
+      // ballInPlay = true;
+    objects[1]->getRigidBody()->applyCentralImpulse(inputImpulse);
+
+    if(gameState == 1)
+    {
+    	gameState = 2;
+    	std::cout << "gameState: " << gameState << std::endl;
+    }
+    else if(gameState == 3)
+    {
+    	gameState = 4;
+    	std::cout << "gameState: " << gameState << std::endl;
+    }
+  // }
+
+    impulsed = true;
+}
 
 // void Graphics::setRightFlip(bool x)
 // {
@@ -693,3 +960,95 @@ void Graphics::toggleShader()
 //     lives = 3;
 //     score = 0;
 // }
+
+void Graphics::ballEnteredPocket(int ballIndex, int pocketIndex)
+{
+    std::cout << "The " << objects[ballIndex]->getState() << " ball entered the ";
+    if(objects[pocketIndex]->getState() == -1)
+    {
+      std::cout << "middle left pocket.";
+    }
+    else if(objects[pocketIndex]->getState() == -2)
+    {
+      std::cout << "middle right pocket.";
+    }
+    else if(objects[pocketIndex]->getState() == -3)
+    {
+      std::cout << "bottom left pocket.";
+    }
+    else if(objects[pocketIndex]->getState() == -4)
+    {
+      std::cout << "bottom right pocket.";
+    }
+    else if(objects[pocketIndex]->getState() == -5)
+    {
+      std::cout << "top left pocket.";
+    }
+    else if(objects[pocketIndex]->getState() == -6)
+    {
+      std::cout << "top right pocket.";
+    }
+
+    ballInPocket = false;
+
+    int ballState = objects[ballIndex]->getState();
+    
+    int typeLoc = 0;
+
+    if(gameState == 2)
+    {
+    	std::cout << " Player 1's turn." << std::endl;
+
+    }
+    else if(gameState == 4)
+    {
+    	std::cout << " Player 2's turn." << std::endl;
+    }
+
+
+    if(ballState >= 1 and ballState <= 7)
+    {
+    	for(int solidIndex = 0; solidIndex < solidIndices.size(); solidIndex++)
+    	{
+    		if(objects[solidIndices[solidIndex]]->getState() == ballState)
+    		{	
+
+    			typeLoc = solidIndex;
+    			solidIndex = solidIndices.size();
+    		}
+    	}
+
+    	solidIndices.erase(solidIndices.begin()+typeLoc);
+
+    }
+    else if(ballState >= 9 and ballState <= 15)
+    {
+    	for(int stripeIndex = 0; stripeIndex < stripeIndices.size(); stripeIndex++)
+    	{
+    		if(objects[stripeIndices[stripeIndex]]->getState() == ballState)
+    		{	
+
+    			typeLoc = stripeIndex;
+    			stripeIndex = stripeIndices.size();
+    		}
+    	}
+
+    	stripeIndices.erase(stripeIndices.begin()+typeLoc);
+
+    }
+
+
+
+    standbyIndices.push_back(ballIndex);
+
+
+    btTransform tmpTransform = objects[ballIndex]->getRigidBody()->getCenterOfMassTransform();
+    tmpTransform.setOrigin(btVector3(4.8,.2,2.85-.5*(standbyIndices.size()-1)));
+    objects[ballIndex]->getRigidBody()->proceedToTransform(tmpTransform);
+    //objects[ballIndex]->Update(1, glm::mat4(1.0f));
+    //objects[ballIndex]->getRigidBody()->setMassProps(0,btVector3(0,0,0));
+    objects[ballIndex]->getRigidBody()->setLinearVelocity(btVector3(0,0,0));
+    objects[ballIndex]->getRigidBody()->setAngularVelocity(btVector3(0,0,0));
+    objects[ballIndex]->getRigidBody()->setLinearFactor(btVector3(0,0,0));
+
+}

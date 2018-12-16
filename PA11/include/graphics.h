@@ -37,7 +37,8 @@ class Graphics
     // void applyPaddleImpulseLeft();
     // void setRightFlip(bool);
     // void setLeftFlip(bool);
-    // void applyImpulse();
+    void applyImpulse(btVector3);
+    void ballEnteredPocket(int,int);
     // void newGame();
 
   private:
@@ -79,6 +80,17 @@ class Graphics
     int cueIndex = 1;
     // int currentObjectIndex;
 
+    vector<int> pocketIndices;
+    vector<int> ballIndices;
+
+    vector<int> solidIndices;
+    vector<int> stripeIndices;
+
+    vector<int> standbyIndices;
+    vector<int> outOfPlayIndices;
+    int eightBallIndex;
+    int cueBallIndex;
+
     // int ballIndex;
     // vector<int> scoreableIndices;
     // int leftPaddleIndex;
@@ -91,6 +103,12 @@ class Graphics
     // bool lifeLost;
     // bool ballInPlay;
     // unsigned int elapsedDT;
+
+    bool ballInPocket;
+    int gameState;
+    bool impulsed;
+    bool typeContact;
+    bool scratched;
 };
 
 #endif /* GRAPHICS_H */

@@ -1,37 +1,27 @@
 
 # obj		shape	motion	scalex scaley scalez	mass	rest	frict	inertX	inertY	inertZ	initX	initY	initZ state
-PoolTable	matrix	static	1	1	1	0	0	0.5	0	0	0	0	0	0	0
-shittyCue	cube	kinematic 1	1	1 	50 	1 	0.5 	0 	0 	0 	0 	.25 	5	3
-PoolTri		cube	static	.93	.93	.93	0	.1	0.5	0	0	0	0	.25	0	2
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	.0	.25	-3	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	.25	.25	-3.5	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	-.25	.25	-3.5	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	0	.25	-4.0	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	.5	.25	-4.	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	-.5	.25	-4.0	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	.25	.25	-4.5	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	-.25	.25	-4.5	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	.75	.25	-4.5	1
-10ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	-.75	.25	-4.5	1
-11ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	0	.25	-5.	1
-12ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	-.5	.25	-5.	1
-13ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	.5	.25	-5. 	1
-14ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	-1.0	.25	-5.	1
-15ball		sphere	dynamic	.25	.25	.25	10	.3	0.5	0	0	0	1.0	.25	-5.	1
-MLPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	0	0	2
+PoolTable	matrix	static	1	1	1	0	0.5	0.2	0	0	0	0	0	0	-7
+0ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	0 	0.25 	2.5	0
+1ball		sphere	dynamic .25	.25	.25 	.17	0.95 	.2 	0 	0 	0 	0 	0.25 	-2	1
+2ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	.25	0.25 	-2.45	2
+3ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	-.25	0.25 	-2.45	3
+4ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	.5	0.25 	-2.9	4
+5ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	-.5 	0.25 	-2.9	5
+6ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	0 	0.25 	-2.9	6
+7ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	.75 	0.25 	-3.35	7
+8ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	.25	0.25 	-3.35	8
+9ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	-.25 	0.25 	-3.35	9
+10ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	-.75	0.25 	-3.35	10
+11ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	1 	0.25 	-3.8	11
+12ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	0.5 	0.25 	-3.8	12
+13ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	0 	0.25 	-3.8	13
+14ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	-.5 	0.25 	-3.8	14
+15ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	-1 	0.25 	-3.8	15
+MLPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	.2	0	-1
+MRPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	.2	0	-2
+BLPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	.2	0	-3
+BRPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	.2	0	-4
+TLPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	.2	0	-5
+TRPocket	cube	static	1	1	1	0	.3	.5	0	0	0	0	.2	0	-6
+Floor		cube	static	1	1	1	0	0	0	0	0	0	0	.2	0	100
 
-# SteelBall	sphere	dynamic	.2	.2	.2	3	.3	0.5	0	0	0	2.5	.2	2.8	1
-# CubeBump	cube	static	1	1	1	0	2.5	0	0	0	0	-.25	0	-1.5	2
-# CylBump	cylinder static	1	1	1	0	2.5	0	0	0	0	-1.5	0	-3	2
-# CylBump	cylinder static	1	1	1	0	2.5	0	0	0	0	-.25	0	-4	2
-# CylBump	cylinder static	1	1	1	0	2.5	0	0	0	0	1	0	-3	2
-# WallBump 	matrix	 static	1	1	1	0	2	0	0	0	0	-.22	0	-.9	2
-# CornerBumps	matrix	static	1	1	1	0	2.5	0	0	0	0	0	0	0	2
-# TriLeft	matrix	 static	1	1	1	0	0	0	0	0	0	-1.5	0	1.75	0
-# TriRight	matrix	 static	1	1	1	0	0	0	0	0	0	.5	0	1.75	0
-# TriLeftBump	matrix	 static	1	1	1	0	2.5	0	0	0	0	-1.75	0	1.4	2
-# TriRightBump	matrix	 static	1	1	1	0	2.5	0	0	0	0	.75	0	1.4	2
-# Arrows	matrix	 static	1	1	1	0	0	0	0	0	0	0	0	0	0
-# LeftFlipper	cube	kinematic 1	1	1 	50 	1 	0.5 	0 	0 	0 	-1.65 	0.0 	2.75	3
-# RightFlipper	cube 	kinematic 1 	1 	1 	50 	1 	0.5 	0 	0 	0 	0.65	0.0 	2.75	4
-# BottomPart	matrix 	static	1	1	1	0	0	0	0	0	0	0	0	0	5

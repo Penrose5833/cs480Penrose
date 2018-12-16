@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 {
 	char filepath[] = "objects.txt";
   // Start an engine and run it then cleanup after
-  Engine *engine = new Engine("Pinball", 800, 600);
+  Engine *engine = new Engine("Pinball", 1600, 1200);
   // if(!engine->Initialize(argv[1]))
   if(!engine->Initialize(filepath))
   {
