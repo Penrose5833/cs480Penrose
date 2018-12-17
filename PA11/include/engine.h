@@ -28,6 +28,7 @@ class Engine
     string m_WINDOW_NAME;
     int m_WINDOW_WIDTH;
     int m_WINDOW_HEIGHT;
+    int player = 1;
     bool m_FULLSCREEN;
     SDL_Event m_event;
 

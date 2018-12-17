@@ -66,7 +66,6 @@ bool Window::Initialize(const string &name, int* width, int* height)
     return false;
   }
 
-
   return true;
 }
 
@@ -77,12 +76,11 @@ void Window::Swap()
 
 SDL_Window* Window::getSDLWindow()
 {
-	return gWindow;
+  return gWindow;
 }
 
 
 SDL_GLContext Window::getGLContext()
 {
-	return gContext;
+  return gContext;
 }
-

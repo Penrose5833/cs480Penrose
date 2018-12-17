@@ -49,9 +49,9 @@ void main(void)
 		float spotKd = max(dot(spotL, N), 0.0);
 		vec4 spotDiffuse = spotKd * vec4(0.3, 0.3, 0, 1);
 		float spotKs = pow( max(dot(N, spotH), 0.0), Shininess);
-		vec4 spotSpecular = spotKs * vec4(0, 1, 0, 1);
-		if ( dot(spotL, N) < 0.0)
-			spotSpecular = vec4(0.0, 1, 0.0, 1.0);
+		vec4 spotSpecular = spotKs * vec4(1, 1, 1, 1);
+		if (dot(spotL, N) < 0.0)
+			spotSpecular = vec4(0.0, 0.0, 0.0, 1.0);
 
 		frag_color = (ambient + diffuse + specular + spotDiffuse + spotSpecular) * texture2D(gSampler, uv.xy);
 	}

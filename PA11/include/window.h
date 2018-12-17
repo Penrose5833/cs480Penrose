@@ -15,6 +15,7 @@ class Window
     SDL_Window* getSDLWindow();
     SDL_GLContext getGLContext();
 
+
   private:
     SDL_Window* gWindow;
     SDL_GLContext gContext;

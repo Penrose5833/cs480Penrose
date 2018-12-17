@@ -26,6 +26,7 @@ class Graphics
     bool createShader(Shader *, std::string vertFilePath, std::string fragFilePath);
     bool setShaderUniformLocations(Shader *);
     void toggleShader();
+    int getPlayerTurn();
     // void adjustAmbientLight();
     // void cycleObjectSelection();
     // void adjustObjectSpecularBrightness();
@@ -39,6 +40,13 @@ class Graphics
     // void setLeftFlip(bool);
     void applyImpulse(btVector3);
     void ballEnteredPocket(int,int);
+    void incrementSelectedBall(int);
+    int getGameState();
+    void moveBallLeft();
+    void moveBallRight();
+    void moveBallUp();
+    void moveBallDown();
+    void dropBall();
     // void newGame();
 
   private:
@@ -78,6 +86,7 @@ class Graphics
 
     vector<Object*> objects;
     int cueIndex = 1;
+    int player = 1;
     // int currentObjectIndex;
 
     vector<int> pocketIndices;
@@ -90,6 +99,7 @@ class Graphics
     vector<int> outOfPlayIndices;
     int eightBallIndex;
     int cueBallIndex;
+
 
     // int ballIndex;
     // vector<int> scoreableIndices;
@@ -109,6 +119,11 @@ class Graphics
     bool impulsed;
     bool typeContact;
     bool scratched;
+    bool solidAllIn;
+    bool stripeAllIn;
+    int calledPocket;
+    int selectedBall;
+    int playerOneType;
 };
 
 #endif /* GRAPHICS_H */

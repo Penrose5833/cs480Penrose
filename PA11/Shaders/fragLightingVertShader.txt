@@ -1,6 +1,6 @@
 #version 330
 
-layout (location = 0) in vec3 v_position;
+layout (location = 0) in vec4 v_position;
 layout (location = 1) in vec2 v_uv;
 layout (location = 2) in vec3 vNormal;
 
@@ -21,27 +21,22 @@ uniform vec4 SpotPosition;
 void main(void)
 {
 	
-
-	vec4 v = vec4(v_position, 1.0);
-
-	vec3 pos = ((viewMatrix * modelMatrix) * v).xyz;
-
 	fN = vNormal;
-	fE = -pos.xyz;
+	fE = v_position.xyz;
 	fL = LightPosition.xyz;
 	fsL = SpotPosition.xyz;
 
 	if(LightPosition.w != 0.0){
-		fL = LightPosition.xyz - pos.xyz;
+		fL = (LightPosition - v_position).xyz;
 	}
 
 	if(SpotPosition.w != 0.0)
 	{
-		fsL = SpotPosition.xyz - pos.xyz;
+		fsL = SpotPosition.xyz - v_position.xyz;
 	}
 
 
-	gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * v;
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * v_position;
 	uv = v_uv;
 
 

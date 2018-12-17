@@ -45,16 +45,13 @@ bool Engine::Initialize(char* configFileName)
     printf("The graphics failed to initialize.\n");
     return false;
   }
-
-
- 	//MENU
- 	ImGui::CreateContext();
+  
+	//MENU
+	ImGui::CreateContext();
 	ImGuiIO& imgui_io = ImGui::GetIO(); (void)imgui_io;
 	ImGui_ImplSDL2_InitForOpenGL(m_window->getSDLWindow(), m_window->getGLContext());
 	ImGui_ImplOpenGL3_Init("#version 130"); // GL 3.0 + GLSL 130
 	ImGui::StyleColorsDark();
-
-  
 
   // Set the time
   m_currentTimeMillis = GetCurrentTimeMillis();
@@ -81,80 +78,75 @@ void Engine::Run()
 
  	// SDL_SetRelativeMouseMode(SDL_TRUE);
 
- 	m_running = true;
-
 	while(m_running)
 	{
 
-	// Update the DT
-	m_DT = getDT();
+		// Update the DT
+		m_DT = getDT();
 
-	// Start Dear ImGui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(m_window->getSDLWindow());
-	ImGui::NewFrame();
+		// Start Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(m_window->getSDLWindow());
+		ImGui::NewFrame();
 
-	// Check input
-	while(SDL_PollEvent(&m_event) != 0)
-	{
-		ImGui_ImplSDL2_ProcessEvent(&m_event); // Dear ImGui input
-		Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
-		// Mouse();
+		// Check the keyboard input
+		while(SDL_PollEvent(&m_event) != 0)
+		{
+			ImGui_ImplSDL2_ProcessEvent(&m_event); //ImGui input
+		  	Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
+		}
+
+		float f; //place holder until connected with austins code.
+
+		bool menu = true; // currently does nothing but still need for "file options"
+		//The Menu
+		
+		ImGui::Begin("Pool is for fools", &menu, ImGuiWindowFlags_MenuBar);
+		if (ImGui::BeginMenuBar())
+		{
+		    if (ImGui::BeginMenu("File"))
+		    {
+		    	if (ImGui::MenuItem("New Game")) {/* the things for a new game */ }
+		        if (ImGui::MenuItem("Exit Game", "ESC"))   { m_running = false;}
+		        ImGui::EndMenu();
+		    }
+		    ImGui::EndMenuBar();
+		}
+
+		if (ImGui::Button("Toggle Lighting"))
+		{
+		    m_graphics -> toggleShader();
+		}
+
+		ImGui::SliderFloat("Strike Power", &f, 0.0f, 10.0f);
+
+		player = m_graphics -> getPlayerTurn();
+		ImGui::TextColored(ImVec4(.3,1,.3,1), "\nPlayer %i's Turn.", player);
+
+
+		ImGui::End();
+
+
+		// Update and render the graphics
+		if(!m_pause)
+			m_graphics->Update(m_DT);
+		else
+			m_graphics->Update(0);
+		
+		
+
+		m_graphics->Render();
+		// Dear ImGui rendering
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		
+
+		// Swap to the Window
+		m_window->Swap();
+		
+
 	}
-
-	// My menu
-	{
-	ImGui::Begin("Hello, World!");
-	ImGui::Text("Some text.");
-	ImGui::End();
-	}
-
-	// Update and render the graphics
-	if(!m_pause)
-		m_graphics->Update(m_DT);
-	else
-		m_graphics->Update(0);
-		
-	m_graphics->Render();
-
-	// Dear ImGui rendering
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	// Swap to the Window
-	m_window->Swap();
-
-	}
-
-	// while(m_running)
-	// {
-
-	// 	// Update the DT
-	// 	m_DT = getDT();
-
-	// 	// Check the keyboard input
-	// 	while(SDL_PollEvent(&m_event) != 0)
-	// 	{
-	// 	  Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
-	// 	}
-
-
-	// 	// Update and render the graphics
-	// 	if(!m_pause)
-	// 		m_graphics->Update(m_DT);
-	// 	else
-	// 		m_graphics->Update(0);
-		
-		
-
-	// 	m_graphics->Render();
-		
-
-	// 	// Swap to the Window
-	// 	m_window->Swap();
-		
-
-	// }
 }
 
 void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned int dt)
@@ -264,10 +256,12 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		}
 		else if(m_event.key.keysym.sym == SDLK_b)
 		{
+			m_graphics->incrementSelectedBall(-1);
 			// m_graphics -> adjustAmbientLight();
 		}
 		else if(m_event.key.keysym.sym == SDLK_n)
         {
+        	m_graphics->incrementSelectedBall(1);
             // m_graphics -> newGame();
         }
 	}
@@ -286,38 +280,72 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		{
 			//m_graphics->translateCamera(glm::vec3(0.0, -0.5, 0.0));
 			// m_graphics->adjustGravity('Z', 2.0);
-			m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
+			if(m_graphics->getGameState() == 5 or m_graphics->getGameState() == 6)
+			{
+				m_graphics->moveBallUp();
+			}
+			else
+			{
+				m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
+			}
 		}
 		else if(m_event.key.keysym.sym == SDLK_DOWN)
 		{
 			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('Z', -2.0);
 			// m_graphics->applyImpulse();
-			m_graphics->applyImpulse(btVector3(0,-.02,.5));
+			if(m_graphics->getGameState() == 5 or m_graphics->getGameState() == 6)
+			{
+				m_graphics->moveBallDown();
+			}
+			else
+			{
+				m_graphics->applyImpulse(btVector3(0,-.02,.5));
+			}
 		}
-		// else if(m_event.key.keysym.sym == SDLK_LEFT)
-		// {
-
-		// 	//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
-		// 	m_graphics->adjustGravity('X', 2.0);
-		// }
-		// else if(m_event.key.keysym.sym == SDLK_RIGHT)
-		// {
-		// 	//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
-		// 	m_graphics->adjustGravity('X', -2.0);
-		// }
 		else if(m_event.key.keysym.sym == SDLK_RIGHT)
 		{
 			// m_graphics -> setRightFlip(false);
 			//m_graphics->applyPaddleImpulseRight();
-			m_graphics->applyImpulse(btVector3(.5,-.02,0));
+			if(m_graphics->getGameState() == 5 or m_graphics->getGameState() == 6)
+			{
+				m_graphics->moveBallRight();
+			}
+			else
+			{
+				m_graphics->applyImpulse(btVector3(.5,-.02,0));
+			}
 		}
 		else if(m_event.key.keysym.sym == SDLK_LEFT)
 		{
 			// m_graphics -> setLeftFlip(false);
 			//m_graphics->applyPaddleImpulseLeft();
-			m_graphics->applyImpulse(btVector3(-.5,-.02,0));
+			if(m_graphics->getGameState() == 5 or m_graphics->getGameState() == 6)
+			{
+				m_graphics->moveBallLeft();
+			}
+			else
+			{
+				m_graphics->applyImpulse(btVector3(-.5,-.02,0));
+			}
 		}
+		else if(m_event.key.keysym.sym == SDLK_b)
+		{
+			m_graphics->incrementSelectedBall(-1);
+			// m_graphics -> adjustAmbientLight();
+		}
+		else if(m_event.key.keysym.sym == SDLK_n)
+        {
+        	m_graphics->incrementSelectedBall(1);
+            // m_graphics -> newGame();
+        }
+        else if(m_event.key.keysym.sym == SDLK_v)
+        {
+        	if(m_graphics->getGameState() == 5 or m_graphics->getGameState() == 6)
+			{
+				m_graphics->dropBall();
+			}
+        }
 	}
 	// else if (m_event.type == SDL_MOUSEBUTTONDOWN)
 	// {
