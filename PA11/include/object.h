@@ -45,6 +45,7 @@ class Object
     void adjustShininess();
 
     btRigidBody* getRigidBody();
+    btVector3 getInitialPosition();
 
   private:
     glm::mat4 model;

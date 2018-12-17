@@ -456,3 +456,8 @@ int Object::getState()
 // {
 //   movingUp = x
 // }
+
+btVector3 Object::getInitialPosition()
+{
+  return initialPosition;
+}

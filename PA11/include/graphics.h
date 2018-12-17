@@ -51,7 +51,9 @@ class Graphics
     void moveBallUp();
     void moveBallDown();
     void dropBall();
-    // void newGame();
+    void newGame();
+    void gameOver(int);
+    void setPocket(int);
 
   private:
     std::string ErrorString(GLenum error);

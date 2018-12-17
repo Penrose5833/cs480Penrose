@@ -37,4 +37,7 @@ This project implements the bullet physics library with both static and dynamic 
 This project implements perVertex and perFragment lighting. To run this project ```cd PA9``` and then follow the instruction in the README.md.
 
 ## PA10: Pinball
-Pinball. To run this project ```cd PA10``` and then follow the instruction in the README.md.
+Pinball. To run this project ```cd PA10``` and then follow the instructions in the README.md.
+
+## PA11: Pool Table
+Pool. To run this project ```cd PA11``` and then follow the instructions in the README.md.

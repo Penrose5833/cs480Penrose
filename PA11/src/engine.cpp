@@ -148,29 +148,29 @@ void Engine::Run()
 		ImGui::BeginChild("Scrolling", ImVec2(0,0), true);//, true);
 		if (ImGui::Button("Top Left"))
 		{
-		    //things
+		    m_graphics->setPocket(-5);
 		}
 
 		if (ImGui::Button("Top Right"))
 		{
-			
+			m_graphics->setPocket(-6);
 		}
 		if (ImGui::Button("Middle Left"))
 		{
-		    //things
+		    m_graphics->setPocket(-1);
 		}
 		if (ImGui::Button("Middle Right"))
 		{
-		    //things
+		    m_graphics->setPocket(-2);
 		}
 		if (ImGui::Button("Bottom Left"))
 		{
-		    //things
+		    m_graphics->setPocket(-3);
 		}
 
 		if (ImGui::Button("Bottom Right"))
 		{
-			
+			m_graphics->setPocket(-4);
 		}
 
 
