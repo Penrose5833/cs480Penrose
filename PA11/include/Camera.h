@@ -13,12 +13,13 @@ class Camera
     glm::mat4 GetProjection();
     glm::mat4 GetView();
     void translateCamera(SDL_Keycode key, unsigned int dt, bool moveCue);
-    void rotateCamera(int, int);
-    void returnToOrigin();
+    void translateCamera(int, int, int, unsigned int dt, bool moveCue);
     void setCueObject(Object*);
+    void setFocusObject(Object*);
+    void update();
   
   private:
-    float camSpeed = 0.002;
+    float camSpeed = 0.004;
 
     glm::vec3 camPositionVec;
     glm::vec3 camDirectionVec;
@@ -28,6 +29,7 @@ class Camera
     glm::mat4 view;
 
     Object* cueObject;
+    Object* focusObject;
 };
 
 #endif /* CAMERA_H */

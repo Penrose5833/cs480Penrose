@@ -1,6 +1,7 @@
 
 # obj		shape	motion	scalex scaley scalez	mass	rest	frict	inertX	inertY	inertZ	initX	initY	initZ state
 PoolTable	matrix	static	1	1	1	0	0.5	0.2	0	0	0	0	0	0	-7
+shittyCue	matrix	kinematic 1	1	1 	.03 	0.75 	0.5 	0 	0 	0 	0 	2 	0	-8
 0ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	0 	0.25 	2.5	0
 1ball		sphere	dynamic .25	.25	.25 	.17	0.95 	.2 	0 	0 	0 	0 	0.25 	-2	1
 2ball		sphere	dynamic .25	.25	.25 	.17 	0.95 	.2 	0 	0 	0 	.25	0.25 	-2.45	2

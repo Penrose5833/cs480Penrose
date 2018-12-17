@@ -22,7 +22,7 @@ bool Camera::Initialize(int w, int h)
   glm::vec3 camTarget = glm::vec3(0.0f);
 
   camUpVec = glm::vec3(0.0,1.0,0.0);
-  camPositionVec = glm::vec3(0.0, 9.0, 3);
+  camPositionVec = glm::vec3(0.0, 3.0, 9.0);
   camDirectionVec = glm::normalize(camPositionVec - camTarget); // unit vector in Direction camera points - actually the opposite direction
 
   view = glm::lookAt( camPositionVec, //Eye Position
@@ -46,79 +46,50 @@ glm::mat4 Camera::GetView()
   return view;
 }
 
-void Camera::translateCamera(SDL_Keycode key, unsigned int dt, bool moveCue)
+void Camera::translateCamera(int X, int Y, int Z, unsigned int dt, bool moveCue)
 {
-  if(key == SDLK_i)
+  X *= .1f;
+  Y *= .1f;
+  Z *= 5.0f;
+  glm::vec3 newPosition = camPositionVec;
+  glm::vec3 focusPosition = glm::vec3(focusObject->GetModel()[3]);
+  camDirectionVec = glm::normalize(camPositionVec - focusPosition);
+  // std::cout << glm::distance(camPositionVec, focusPosition) << std::endl;
+
+  newPosition -= (float)X * float(dt) * camSpeed * glm::normalize(glm::cross(camDirectionVec, camUpVec));
+  newPosition += (float)Y * float(dt) * camSpeed * glm::normalize(glm::cross(camDirectionVec, glm::cross(camDirectionVec, camUpVec)));
+  newPosition -= (float)Z * float(dt) * camSpeed * camDirectionVec;
+  
+  if(glm::distance(newPosition, focusPosition) >= 4.0)
   {
-    camPositionVec -= float(dt) * camSpeed * camDirectionVec;
-  }  
-  else if(key == SDLK_j)
-  {
-    camPositionVec += glm::normalize(glm::cross(camDirectionVec, camUpVec)) * float(dt) * camSpeed;
+    camPositionVec = newPosition;
   }
-  else if(key == SDLK_k)
-  {
-    camPositionVec += float(dt) * camSpeed * camDirectionVec;
-  }
-  else if(key == SDLK_l)
-  {
-    camPositionVec -= glm::normalize(glm::cross(camDirectionVec, camUpVec)) * float(dt) * camSpeed;
-  }
-  else if(key == SDLK_u)
-  {
-    camPositionVec += float(dt) * camSpeed* glm::normalize(camUpVec);
-  }
-  else if(key == SDLK_o)
-  {
-    camPositionVec -= float(dt) * camSpeed * glm::normalize(camUpVec);
-  }
-  camDirectionVec = glm::normalize(camPositionVec - glm::vec3(0,0,0));
+}
+
+void Camera::update()
+{
+  glm::vec3 focusPosition = glm::vec3(focusObject->GetModel()[3]);
+  camDirectionVec = glm::normalize(camPositionVec - focusPosition);
+
   view = glm::lookAt( camPositionVec, //Eye Position
-                      glm::vec3(0,0,0), //Focus point
+                      focusPosition, //Focus point
                       camUpVec); //Positive Y is up
 
-  // btTransform trans = rigidBody->getCenterOfMassTransform();
-  //   //trans.setOrigin(btVector3(0,2,0));
-  //   btQuaternion transrot = trans.getRotation();
-  //   // btQuaternion rotquat;
-  //   // rotquat = rotquat.getIdentity();
-  //   // rotquat.setX(0);
-  //   // rotquat.setY(-0.001);
-  //   // rotquat.setZ(0);
-
-  //   transrot.setEuler(angle,0,0);
-  //   trans.setRotation(transrot);
-  //   trans.setOrigin(initialPosition);
-  //   // trans.setOrigin(btVector3(origin.x(),origin.y(),origin.z()));
-  //   // rigidBody-> getMotionState() -> setCenterOfMassTransform(trans);
-  //   rigidBody -> getMotionState() -> setWorldTransform(trans);
-
+  glm::vec3 camRelativeRight = glm::normalize(glm::cross(camDirectionVec, camUpVec));
+  glm::vec3 camRelativeDown = glm::normalize(glm::cross(camDirectionVec, camRelativeRight));
+  glm::vec3 cuePosition = camPositionVec + (camDirectionVec * -1.0f + camRelativeDown * 0.2f);
+  glm::mat4 cueModel = glm::inverse(glm::lookAt(cuePosition, focusPosition, camUpVec));
+  cueObject->Update(cueModel);
 }
 
-void Camera::rotateCamera(int X, int Y)
-{
-  // X *= .05f;
-  // Y *= .05f;
-  // currentYaw = glm::sin(camDirection.x);
-  // currentPitch = glm::sin(camDirection.y);
-  // float yaw = glm::asin(X / 1000.0f);
-  // float pitch = glm::asin(Y / 1000.0f);
-
-  // camDirectionVec.x = glm::cos(glm::radians)
-
-  // float magnitude = glm::sqrt(glm::pow((float)X, 2.0f) + glm::pow((float)Y, 2.0f));
-	// view = glm::rotate(view, yaw, glm::vec3(0, 1, 0));
- //  view = glm::rotate(view, pitch, glm::vec3(1, 0, 0));
-}
-
-void Camera::returnToOrigin()
-{
-    view = glm::lookAt( camPositionVec, //Eye Position
-                        camPositionVec - camDirectionVec, //Focus point
-                        glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-}
 
 void Camera::setCueObject(Object* cue)
 {
   cueObject = cue;
+}
+
+void Camera::setFocusObject(Object* focus)
+{
+  cueObject -> setFocusObject(focus);
+  focusObject = focus;
 }

@@ -163,11 +163,8 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
   btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass, shapeMotionState, shape, inertia);
 
   shapeRigidBodyCI.m_friction = friction;
-  // if(state == 1)
-  // {
-    shapeRigidBodyCI.m_rollingFriction = 0.005;
-    shapeRigidBodyCI.m_spinningFriction = 0.1;
-  // }
+  shapeRigidBodyCI.m_rollingFriction = 0.01;
+  shapeRigidBodyCI.m_spinningFriction = 0.01;
   rigidBody = new btRigidBody(shapeRigidBodyCI);
   // std::cout << "RR" << std::endl;
   if(motionState == "kinematic")
@@ -236,149 +233,87 @@ bool Object::loadObject(btDiscreteDynamicsWorld * dynamicsWorld)//,
 
     glBindTexture(GL_TEXTURE_2D, 0);
   }
-  // angle = 0;
-  // movingUp = false;
 	return true;
+}
+
+void Object::Update(glm::mat4 openGLTransform)
+{ 
+  btTransform trans;
+  model = openGLTransform;
+  // for(int i = 0; i < 16; i++)
+  // {
+  //   cout << glm::value_ptr(model)[i]<< '\t';
+  // }
+  // cout << endl;
+  trans.setFromOpenGLMatrix(glm::value_ptr(model));
+  rigidBody -> getMotionState() -> setWorldTransform(trans);
 }
 
 void Object::Update(unsigned int dt, glm::mat4 parentTranslation)
 {
-
-  // if(motionState == "kinematic")
-  // {
-  //   float deltaAngle = 7 * dt * M_PI/1000;
-  //   if(state == 4)//left
-  //   {
-  //     if(movingUp)
-  //     {
-  //       angle -= deltaAngle;
-  //       // trans.setOrigin(btVector3(origin.x()+0.4,origin.y(),origin.z()+0.4));
-  //       if(angle <= 0 - 1)
-  //       {
-  //         //movingUp = false;
-  //         angle = 0 - 1;
-  //       }
-  //     }
-  //     else
-  //     {
-  //       if(angle <= 0)
-  //       {
-  //         angle += deltaAngle;
-  //         //movingUp = false;
-  //         // angle = M_PI;
-  //         // movingUp = false;
-  //       }
-  //     }
-  //   }
-  //   else if(state == 3)//left
-  //   {
-  //     if(movingUp)
-  //     {
-  //       angle += deltaAngle;
-  //       // trans.setOrigin(btVector3(origin.x()+0.4,origin.y(),origin.z()+0.4));
-  //       if(angle >= 0 + 1)
-  //       {
-  //         //movingUp = false;
-  //         angle = 0 + 1;
-  //       }
-  //     }
-  //     else
-  //     {
-  //       if(angle >= 0)
-  //       {
-  //         angle -= deltaAngle;
-  //         //movingUp = false;
-  //         // angle = M_PI;
-  //         // movingUp = false;
-  //       }
-  //     }
-  //   }
-
-  //   btTransform trans = rigidBody->getCenterOfMassTransform();
-  //   //trans.setOrigin(btVector3(0,2,0));
-  //   btQuaternion transrot = trans.getRotation();
-  //   // btQuaternion rotquat;
-  //   // rotquat = rotquat.getIdentity();
-  //   // rotquat.setX(0);
-  //   // rotquat.setY(-0.001);
-  //   // rotquat.setZ(0);
-
-  //   transrot.setEuler(angle,0,0);
-  //   trans.setRotation(transrot);
-  //   trans.setOrigin(initialPosition);
-  //   // trans.setOrigin(btVector3(origin.x(),origin.y(),origin.z()));
-  //   // rigidBody-> getMotionState() -> setCenterOfMassTransform(trans);
-  //   rigidBody -> getMotionState() -> setWorldTransform(trans);
-
-  // }
   btTransform trans;
+  if(motionState == "kinematic")
+  {
+    glm::vec3 focusPosition = glm::vec3(focusObject->GetModel()[3]);
+    glm::vec3 currentPosition = glm::vec3(model[3]);
+    glm::vec3 strikeDirectionVec = glm::normalize(focusPosition - currentPosition);
+    float deltaPosition = strikeSpeedPercent * maxStrikeSpeed * dt/1000;
+    
+    if(striking)
+    {
+      if(strikeDisplacement < maxStrikeDisplacement)
+      {
+        strikeDisplacement = strikeDisplacement + deltaPosition;
+      }
+      else
+      {
+        strikeDisplacement = strikeDisplacement - deltaPosition;
+        striking = false;
+      }
+    }
+    else
+    {
+      if(strikeDisplacement > 0.0f)
+      {
+        strikeDisplacement = strikeDisplacement - deltaPosition;
+      }
+      else
+      {
+        strikeDisplacement = 0.0f;
+        // strikeSpeed = 0.0f;
+      }
+    }
+    currentPosition = currentPosition + (strikeDisplacement * strikeDirectionVec);
+    model = glm::inverse(glm::lookAt(currentPosition, focusPosition, glm::vec3(0.0,1.0,0)));
+    trans.setFromOpenGLMatrix(glm::value_ptr(model));
+    rigidBody -> getMotionState() -> setWorldTransform(trans);
+  }
   btScalar m[16];
   rigidBody->getMotionState()->getWorldTransform(trans);
   trans.getOpenGLMatrix(m);
   model = glm::scale(glm::make_mat4(m), glm::vec3(scale.x, scale.y, scale.z));
+}
 
-  // if(motionState == "kinematic")
-  // {
+// void Object::increaseStrikeSpeed()
+// {
+//   strikeSpeed = strikeSpeed + 5.0f;
+//   cout << strikeSpeed << endl;
+// }
 
-    // float deltaAngle = 0.1 * dt * M_PI/1000;
-    
+void Object::setStrikeSpeed(float percent)
+{
+  strikeSpeedPercent = percent;
+}
 
-    // std::cout << angle << std::endl;
+void Object::setCueStrike()
+{
+  striking = true;
+  cout << striking << endl;
+}
 
-
-    // rigidBody -> setCollisionFlags(rigidBody-> getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-    // btTransform trans = rigidBody->getCenterOfMassTransform();
-    // //trans.setOrigin(btVector3(0,2,0));
-    // btQuaternion transrot = trans.getRotation();
-    // btQuaternion rotquat;
-    // rotquat = rotquat.getIdentity();
-    // rotquat.setX(0);
-    // rotquat.setY(-0.001);
-    // rotquat.setZ(0);
-
-
-
-    // btVector3 origin = trans.getOrigin();
-
-    // if(movingUp)
-    // {
-    //   angle += 0.1 * dt * M_PI/1000;
-
-    //   
-    //   trans.setOrigin(btVector3(origin.x()+0.4,origin.y(),origin.z()+0.4));
-    //   if(angle >= 0.1)
-    //   {
-    //     movingUp = false;
-    //     angle = 0;
-
-    //   }
-    // }
-    // else
-    // {
-    //   angle += 0.1 * dt * M_PI/1000;
-
-    //   rotquat.setEulerZYX(0,0.8 * dt * M_PI/1000,0);
-    //   trans.setOrigin(btVector3(origin.x()+0.4,origin.y(),origin.z()+0.4));
-    //   if(angle >= 0.1)
-    //   {
-    //     movingUp = true;
-    //     angle = 0;
-    //   }
-    // }
-    // transrot = rotquat * transrot;
-    // btScalar x,y,z;
-    // trans.getBasis().getEulerZYX(z,y,x);
-    // trans.setOrigin(btVector3(x+1,y+1,z+1));
-    // trans.setOrigin(btVector3(origin.x()+0.4*glm::cos(angle),origin.y(),origin.z()+0.4*glm::sin(angle)));
-
-    
-    // trans.setRotation(transrot);
-    //  trans.setOrigin(btVector3(origin.x(),origin.y(),origin.z()));
-    // // rigidBody-> getMotionState() -> setCenterOfMassTransform(trans);
-    // rigidBody -> getMotionState() -> setWorldTransform(trans);
-    // rigidBody->setActivationState(DISABLE_DEACTIVATION);
-    // cout << "twisted the flipper\n";
-  // }
+void Object::setFocusObject(Object* ball)
+{
+  focusObject = ball;
 }
 
 glm::mat4 Object::GetModel()
@@ -403,10 +338,6 @@ void Object::Render()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,uv));
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,normal));
-
-
-
-
 
     glActiveTexture( GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, aTexture[renderIndex]);

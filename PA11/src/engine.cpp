@@ -68,6 +68,7 @@ void Engine::Run()
 	int* mouseYPtr;
 	bool shift = false;
 	bool* shiftPtr = &shift;
+	float strikeSpeedPercent = 0.5;
 
 	mouseXPtr = &mouseX;
 	mouseYPtr = &mouseY;
@@ -76,7 +77,10 @@ void Engine::Run()
 	m_pause = false;
  	m_running = true;
 
- 	// SDL_SetRelativeMouseMode(SDL_TRUE);
+ 	SDL_SetRelativeMouseMode(SDL_TRUE);
+ 	SDL_SetWindowGrab(m_window -> getSDLWindow(), SDL_TRUE);
+ 
+ 	// SDL_CaptureMouse(SDL_TRUE);
 
 	while(m_running)
 	{
@@ -96,7 +100,7 @@ void Engine::Run()
 		  	Keyboard(shiftPtr, mouseXPtr, mouseYPtr, m_DT);
 		}
 
-		float f; //place holder until connected with austins code.
+
 
 		bool menu = true; // currently does nothing but still need for "file options"
 		//The Menu
@@ -118,24 +122,69 @@ void Engine::Run()
 		    m_graphics -> toggleShader();
 		}
 
-		ImGui::SliderFloat("Strike Power", &f, 0.0f, 10.0f);
+		ImGui::SliderFloat("Strike Power", &strikeSpeedPercent, 0.1f, 1.0f);
+		m_graphics -> setStrikeSpeed(strikeSpeedPercent);
 
-		player = m_graphics -> getPlayerTurn();
+		state = m_graphics -> getGameState();
+		if (state != oldState)
+		{
+			if (state == 3 || state == 6 || state == 5)
+			{
+				if (player == 1)
+					player = 2;
+				else player = 1;
+			}
+
+			oldState = state;
+
+		}
+
 		ImGui::TextColored(ImVec4(.3,1,.3,1), "\nPlayer %i's Turn.", player);
 
+		//if not time to shoot 8 ball
+		ImGui::TextColored(ImVec4(1,0,0,1), "\nSelect A Pocket");
+		//if time to shoot 8 ball
+		//ImGui::TextColored(ImVec4(0,1,0,1), "\nSelect A Pocket");
+		ImGui::BeginChild("Scrolling", ImVec2(0,0), true);//, true);
+		if (ImGui::Button("Top Left"))
+		{
+		    //things
+		}
+
+		if (ImGui::Button("Top Right"))
+		{
+			
+		}
+		if (ImGui::Button("Middle Left"))
+		{
+		    //things
+		}
+		if (ImGui::Button("Middle Right"))
+		{
+		    //things
+		}
+		if (ImGui::Button("Bottom Left"))
+		{
+		    //things
+		}
+
+		if (ImGui::Button("Bottom Right"))
+		{
+			
+		}
+
+
+		
+		ImGui::EndChild();
 
 		ImGui::End();
 
 
 		// Update and render the graphics
-		if(!m_pause)
-			m_graphics->Update(m_DT);
-		else
-			m_graphics->Update(0);
-		
-		
 
+		m_graphics->Update(m_DT);
 		m_graphics->Render();
+
 		// Dear ImGui rendering
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -166,55 +215,68 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		{
 			m_running = false;
 		}
+		if (m_event.key.keysym.sym == SDLK_q)
+		{
+			SDL_bool mode = SDL_GetRelativeMouseMode();
+			if(mode == SDL_TRUE)
+				mode = SDL_FALSE;
+			else
+				mode = SDL_TRUE;
+			// cout << mode << endl;
+			SDL_SetRelativeMouseMode(mode);
+			// SDL_CaptureMouse(mode);
+			SDL_SetWindowGrab(m_window -> getSDLWindow(), mode);
+		}
 		else if(m_event.key.keysym.sym == SDLK_i)
 		{
-			m_graphics-> translateCamera(SDLK_i, dt, shiftPtr);
+			// m_graphics-> translateCamera(SDLK_i, dt, shiftPtr);
 		}
 		else if(m_event.key.keysym.sym == SDLK_j)
 		{
-			m_graphics-> translateCamera(SDLK_j, dt, shiftPtr);
+			// m_graphics-> translateCamera(SDLK_j, dt, shiftPtr);
 		}
 		else if(m_event.key.keysym.sym == SDLK_k)
 		{
-			m_graphics-> translateCamera(SDLK_k, dt, shiftPtr);
+			// m_graphics-> translateCamera(SDLK_k, dt, shiftPtr);
 		}
 		else if(m_event.key.keysym.sym == SDLK_l)
 		{
-			m_graphics-> translateCamera(SDLK_l, dt, shiftPtr);
+			// m_graphics-> translateCamera(SDLK_l, dt, shiftPtr);
 		}
-		else if(m_event.key.keysym.sym == SDLK_u, shiftPtr)
+		else if(m_event.key.keysym.sym == SDLK_u)
 		{
-			m_graphics-> translateCamera(SDLK_u, dt, shiftPtr);
+			// m_graphics-> translateCamera(SDLK_u, dt, shiftPtr);
 		}
 		else if(m_event.key.keysym.sym == SDLK_o)
 		{
-			m_graphics-> translateCamera(SDLK_o, dt, shiftPtr);
+			// m_graphics-> translateCamera(SDLK_o, dt, shiftPtr);
 		}
 		else if(m_event.key.keysym.sym == SDLK_UP)
 		{
 			// m_graphics->translateCamera(glm::vec3(0.0, -0.5, 0.0));
 			// m_graphics->adjustGravity('Z', -2.0);
-			m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
+			// m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
 		}
 		else if(m_event.key.keysym.sym == SDLK_DOWN)
 		{
-			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
+			// m_graphics -> increaseStrikeSpeed();
+			// m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('Z', 2.0);
-			m_graphics->applyImpulse(btVector3(0,-.02,0.5));
+			// m_graphics->applyImpulse(btVector3(0,-.02,0.5));
 		}
 		else if(m_event.key.keysym.sym == SDLK_LEFT)
 		{
 			// m_graphics->setLeftFlip(true);
-			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
+			// m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('X', -2.0);
-			m_graphics->applyImpulse(btVector3(-0.5,-.02,0));
+			// m_graphics->applyImpulse(btVector3(-0.5,-.02,0));
 		}
 		else if(m_event.key.keysym.sym == SDLK_RIGHT)
 		{
 			// m_graphics->setRightFlip(true);
-			//m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
+			// m_graphics->translateCamera(glm::vec3(0.0, 0.5, 0.0));
 			// m_graphics->adjustGravity('X', 2.0);
-			m_graphics->applyImpulse(btVector3(0.5,-.02,0));
+			// m_graphics->applyImpulse(btVector3(0.5,-.02,0));
 		}
 		else if(m_event.key.keysym.sym == SDLK_w)
 		{
@@ -224,7 +286,7 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 		}
 		else if(m_event.key.keysym.sym == SDLK_a)
 		{
-			//reverse orbit on down key
+			// reverse orbit on down key
 			// m_graphics->reverseObjectOrbit();
 			// m_graphics-> translateCamera(glm::vec3(-0.5, 0.0, 0.0));
 			// m_graphics -> cycleObjectSelection();
@@ -286,7 +348,7 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 			}
 			else
 			{
-				m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
+				// m_graphics->applyImpulse(btVector3(0,-.02,-0.5));
 			}
 		}
 		else if(m_event.key.keysym.sym == SDLK_DOWN)
@@ -300,7 +362,7 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 			}
 			else
 			{
-				m_graphics->applyImpulse(btVector3(0,-.02,.5));
+				// m_graphics->applyImpulse(btVector3(0,-.02,.5));
 			}
 		}
 		else if(m_event.key.keysym.sym == SDLK_RIGHT)
@@ -313,7 +375,7 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 			}
 			else
 			{
-				m_graphics->applyImpulse(btVector3(.5,-.02,0));
+				// m_graphics->applyImpulse(btVector3(.5,-.02,0));
 			}
 		}
 		else if(m_event.key.keysym.sym == SDLK_LEFT)
@@ -326,7 +388,7 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 			}
 			else
 			{
-				m_graphics->applyImpulse(btVector3(-.5,-.02,0));
+				// m_graphics->applyImpulse(btVector3(-.5,-.02,0));
 			}
 		}
 		else if(m_event.key.keysym.sym == SDLK_b)
@@ -346,19 +408,42 @@ void Engine::Keyboard(bool* shiftPtr, int* mouseXPtr, int* mouseYPtr, unsigned i
 				m_graphics->dropBall();
 			}
         }
+        else if(m_event.key.keysym.sym == SDLK_s)
+        {
+        	m_graphics -> setCueStrike();
+        }
 	}
-	// else if (m_event.type == SDL_MOUSEBUTTONDOWN)
-	// {
-	// 	//pause motion
-	// 	m_pause = !m_pause;
-	// }
+	else if (m_event.type == SDL_MOUSEBUTTONDOWN)
+	{
+		// m_graphics -> increaseStrikeSpeed();
+		if(SDL_GetRelativeMouseMode() == SDL_TRUE)
+		{
+			m_graphics -> setCueStrike();
+		}
+	}
+	else if (m_event.type == SDL_MOUSEBUTTONUP)
+	{
+		// m_graphics -> setCueStrike();
+	}
 	else if (m_event.type == SDL_MOUSEMOTION)
 	{
 		// cout << "lastX: " << *mouseXPtr << " lastY: " << *mouseYPtr << endl; 
 		SDL_GetRelativeMouseState(mouseXPtr, mouseYPtr);
 		// cout << "newX: " << *mouseXPtr << " newY: " << *mouseYPtr << endl;
-
-		m_graphics -> rotateCamera(*mouseXPtr, *mouseYPtr);
+		if(SDL_GetRelativeMouseMode() == SDL_TRUE)
+		{
+			m_graphics -> translateCamera(*mouseXPtr, *mouseYPtr, 0, dt, shiftPtr);
+		}
+	}
+	else if (m_event.type == SDL_MOUSEWHEEL)
+	{
+		// cout << "lastX: " << *mouseXPtr << " lastY: " << *mouseYPtr << endl; 
+		SDL_GetRelativeMouseState(mouseXPtr, mouseYPtr);
+		// cout << m_event.wheel.y << endl;
+		if(SDL_GetRelativeMouseMode() == SDL_TRUE)
+		{
+			m_graphics -> translateCamera(0, 0, m_event.wheel.y, dt, shiftPtr);
+		}
 	}
 }
 

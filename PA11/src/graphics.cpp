@@ -522,18 +522,22 @@ bool Graphics::LoadObjects(char* configFileName)
           {
           	cueBallIndex = (objects.size() - 1);
           }
-       }
-       else if(stoi(tmp) >= -6 and stoi(tmp) <= -1)
-       {
+        }
+        else if(stoi(tmp) >= -6 and stoi(tmp) <= -1)
+        {
           pocketIndices.push_back(objects.size() -1);
-       }
+        }
+        else if(stoi(tmp) == -8)
+        {
+          cueIndex = objects.size()-1;
+        }
 
       objects[objects.size() -1] -> loadObject(dynamicsWorld);
       
 
       // std::cout << tmp << std::endl;
     }
-    cout << objects.size() << endl;
+    // cout << objects.size() << endl;
 
   }
   
@@ -543,10 +547,12 @@ bool Graphics::LoadObjects(char* configFileName)
   // btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(0, shapeMotionState, shape, btVector3(0, 0, 0));
   // btRigidBody* rigidBody = new btRigidBody(shapeRigidBodyCI);
   // dynamicsWorld-> addRigidBody(rigidBody);
-  m_camera -> setCueObject(objects[1]);
+  m_camera -> setCueObject(objects[cueIndex]);
+  m_camera -> setFocusObject(objects[cueBallIndex]);
 
   return true;
 }
+
 
 void Graphics::Update(unsigned int dt)
 {
@@ -554,6 +560,7 @@ void Graphics::Update(unsigned int dt)
   // m_cube1->Update(dt, glm::mat4(1.0f));
   // m_cube2->Update(dt, m_cube1 -> GetTranslation());
   dynamicsWorld->stepSimulation(dt/1000.0, 100000); 
+  m_camera->update();
   for(int i = 0; i < objects.size(); i++)
   {
       objects[i] -> Update(dt, glm::mat4(1.0f));
@@ -1033,7 +1040,7 @@ void Graphics::Render()
   glUniform4f(m_spot, 0, 5, 5, 1);
 
 
-  glm::vec4 temp = glm::vec4 (0, 5, 5, 1) - (objects[1]->GetModel()*glm::vec4(0,0,0,1));
+  glm::vec4 temp = glm::vec4 (0, 5, 5, 1) - (objects[cueBallIndex]->GetModel()*glm::vec4(0,0,0,1));
   glUniform4f(m_spotDirection, temp.x, temp.y, temp.z, temp.w);
   glUniform1f(m_spotCutoff, glm::radians(5.0));
 
@@ -1094,14 +1101,9 @@ std::string Graphics::ErrorString(GLenum error)
   }
 }
 
-void Graphics::translateCamera(SDL_Keycode key, unsigned int dt, bool moveCue)
+void Graphics::translateCamera(int X, int Y, int Z, unsigned int dt, bool moveCue)
 {
-  m_camera->translateCamera(key, dt, moveCue);
-}
-
-void Graphics::rotateCamera(int X, int Y)
-{
-  m_camera->rotateCamera(X, Y);
+  m_camera->translateCamera(X, Y, Z, dt, moveCue);
 }
 
 // void Graphics::returnCameraToOrigin()
@@ -1141,6 +1143,32 @@ void Graphics::toggleShader()
     m_currentShader = m_gourandShader;
   }
   setShaderUniformLocations(m_currentShader);
+}
+
+// void Graphics::increaseStrikeSpeed()
+// {
+//   objects[cueIndex] -> increaseStrikeSpeed();
+//   // cout << cueIndex << endl;
+// }
+
+void Graphics::setStrikeSpeed(float percent)
+{
+  objects[cueIndex] -> setStrikeSpeed(percent);
+}
+
+void Graphics::setCueStrike()
+{
+  objects[cueIndex] -> setCueStrike();
+  if(gameState == 1)
+    {
+      gameState = 2;
+      std::cout << "gameState: " << gameState << std::endl;
+    }
+    else if(gameState == 3)
+    {
+      gameState = 4;
+      std::cout << "gameState: " << gameState << std::endl;
+    }
 }
 
 // void Graphics::adjustAmbientLight()
@@ -1415,7 +1443,6 @@ void Graphics::incrementSelectedBall(int in)
 {
 	selectedBall += in;
 	std::cout << "selectedBall: " << selectedBall << std::endl;
-
 }
 
 int Graphics::getGameState()

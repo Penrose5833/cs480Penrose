@@ -14,6 +14,7 @@ class Object
     ~Object();
     bool loadObject(btDiscreteDynamicsWorld *);
     void Update(unsigned int dt, glm::mat4);
+    void Update(glm::mat4 newModel);
     void Render();
 
     void setMass(float);
@@ -27,8 +28,10 @@ class Object
     void setMotionState(std::string);
     void setState(int);
     int getState();
-    // void setFlip(bool);
-    // void setLeftFlip(bool);
+    void setCueStrike();
+    // void increaseStrikeSpeed();
+    void setStrikeSpeed(float);
+    void setFocusObject(Object* ball);
 
     glm::mat4 GetModel();
     glm::mat4 GetTranslation();
@@ -80,8 +83,13 @@ class Object
     glm::vec4 diffuseVec;
     glm::vec4 specularVec;
     float shininess;
-    // float angle;
-    // bool movingUp;
+
+    bool striking = false;
+    float maxStrikeSpeed = 20.0;
+    float strikeSpeedPercent = 0.5;
+    float strikeDisplacement = 0.0;
+    float maxStrikeDisplacement = 1.5;
+    Object* focusObject;
     int state;
 
 

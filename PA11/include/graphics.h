@@ -20,13 +20,17 @@ class Graphics
     void Render();
     bool LoadObjects(char* configFileName);
     void translateCamera(SDL_Keycode key, unsigned int dt, bool moveCue);
-    void rotateCamera(int, int);
+    void translateCamera(int, int, int, unsigned int dt, bool moveCue);
+    // void rotateCamera(int, int);
     // void returnCameraToOrigin();
     // void adjustGravity(char, float);
     bool createShader(Shader *, std::string vertFilePath, std::string fragFilePath);
     bool setShaderUniformLocations(Shader *);
     void toggleShader();
     int getPlayerTurn();
+    // void increaseStrikeSpeed();
+    void setStrikeSpeed(float);
+    void setCueStrike();
     // void adjustAmbientLight();
     // void cycleObjectSelection();
     // void adjustObjectSpecularBrightness();
@@ -85,7 +89,6 @@ class Graphics
 
 
     vector<Object*> objects;
-    int cueIndex = 1;
     int player = 1;
     // int currentObjectIndex;
 
@@ -98,6 +101,7 @@ class Graphics
     vector<int> standbyIndices;
     vector<int> outOfPlayIndices;
     int eightBallIndex;
+    int cueIndex;
     int cueBallIndex;
 
 
